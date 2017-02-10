@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="PostgreSQL - watermarker@localhost" uuid="add5e2b6-3544-487a-9e33-fd92128c1737">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/watermarker</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="PostgreSQL - watermarkerTest@localhost" uuid="d363c273-cb77-4179-882c-51affac421ce">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/watermarkerTest</jdbc-url>
+    </data-source>
+  </component>
+</project>

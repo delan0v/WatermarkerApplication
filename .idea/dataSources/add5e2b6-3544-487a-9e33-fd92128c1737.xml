@@ -1,0 +1,209 @@
+<dataSource name="PostgreSQL - watermarker@localhost">
+  <database-model serializer="dbm" rdbms="POSTGRES" format-version="2.6">
+    <database id="1" name="watermarker">
+      <object-id>32955</object-id>
+      <visible>1</visible>
+    </database>
+    <database id="2" name="postgres">
+      <object-id>12373</object-id>
+    </database>
+    <database id="3" name="mydb">
+      <object-id>32849</object-id>
+    </database>
+    <database id="4" name="WatermarkerDB">
+      <object-id>32868</object-id>
+    </database>
+    <database id="5" name="watermarkerTest">
+      <object-id>32956</object-id>
+    </database>
+    <schema id="6" parent="1" name="public">
+      <object-id>2200</object-id>
+      <visible>1</visible>
+      <introspection-state-number>961</introspection-state-number>
+      <introspection-timestamp>2017-02-05.13:30:20.466</introspection-timestamp>
+    </schema>
+    <schema id="7" parent="1" name="pg_catalog">
+      <object-id>11</object-id>
+    </schema>
+    <schema id="8" parent="1" name="pg_toast">
+      <object-id>99</object-id>
+    </schema>
+    <schema id="9" parent="1" name="pg_temp_1">
+      <object-id>11816</object-id>
+    </schema>
+    <schema id="10" parent="1" name="pg_toast_temp_1">
+      <object-id>11817</object-id>
+    </schema>
+    <schema id="11" parent="1" name="information_schema">
+      <object-id>12081</object-id>
+    </schema>
+    <sequence id="12" parent="6" name="id_document_seq">
+      <object-id>32977</object-id>
+      <state-number>828</state-number>
+    </sequence>
+    <sequence id="13" parent="6" name="id_user_seq">
+      <object-id>32975</object-id>
+      <state-number>827</state-number>
+    </sequence>
+    <sequence id="14" parent="6" name="id_watermark_seq">
+      <object-id>32979</object-id>
+      <state-number>829</state-number>
+    </sequence>
+    <table id="15" parent="6" name="w_document">
+      <object-id>32963</object-id>
+      <state-number>869</state-number>
+    </table>
+    <table id="16" parent="6" name="w_user">
+      <object-id>32957</object-id>
+      <state-number>839</state-number>
+    </table>
+    <table id="17" parent="6" name="w_watermark">
+      <object-id>32969</object-id>
+      <state-number>916</state-number>
+    </table>
+    <column id="18" parent="15" name="document_id">
+      <state-number>833</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+      <default-expression>nextval('id_document_seq'::regclass)</default-expression>
+    </column>
+    <column id="19" parent="15" name="user_id">
+      <state-number>825</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+    </column>
+    <column id="20" parent="15" name="document_name">
+      <state-number>825</state-number>
+      <mandatory>1</mandatory>
+      <data-type>text|0</data-type>
+    </column>
+    <column id="21" parent="15" name="document_document">
+      <state-number>825</state-number>
+      <mandatory>1</mandatory>
+      <data-type>text|0</data-type>
+    </column>
+    <column id="22" parent="15" name="document_hash_code">
+      <state-number>880</state-number>
+      <data-type>text|0</data-type>
+    </column>
+    <index id="23" parent="15" name="document_pkey">
+      <object-id>32986</object-id>
+      <columns>document_id</columns>
+      <desc-columns />
+      <unique>1</unique>
+    </index>
+    <key id="24" parent="15" name="document_pkey">
+      <object-id>32987</object-id>
+      <columns>document_id</columns>
+      <underlying-index>document_pkey</underlying-index>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="25" parent="15" name="w_document_user_id_fkey">
+      <object-id>32990</object-id>
+      <columns>user_id</columns>
+      <ref-key>~.w_user.user_pkey</ref-key>
+      <cascade-update-rule>restrict</cascade-update-rule>
+      <cascade-delete-rule>restrict</cascade-delete-rule>
+    </foreign-key>
+    <column id="26" parent="16" name="user_id">
+      <state-number>831</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+      <default-expression>nextval('id_user_seq'::regclass)</default-expression>
+    </column>
+    <column id="27" parent="16" name="user_name">
+      <state-number>824</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(255)|0</data-type>
+    </column>
+    <column id="28" parent="16" name="user_surname">
+      <state-number>867</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(255)|0</data-type>
+    </column>
+    <column id="29" parent="16" name="user_login">
+      <state-number>824</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(255)|0</data-type>
+    </column>
+    <column id="30" parent="16" name="user_email">
+      <state-number>824</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(255)|0</data-type>
+    </column>
+    <column id="31" parent="16" name="user_password">
+      <state-number>824</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(255)|0</data-type>
+    </column>
+    <index id="32" parent="16" name="user_pkey">
+      <object-id>32984</object-id>
+      <columns>user_id</columns>
+      <desc-columns />
+      <unique>1</unique>
+    </index>
+    <key id="33" parent="16" name="user_pkey">
+      <object-id>32985</object-id>
+      <columns>user_id</columns>
+      <underlying-index>user_pkey</underlying-index>
+      <primary>1</primary>
+    </key>
+    <column id="34" parent="17" name="watermark_id">
+      <state-number>913</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(255)|0</data-type>
+      <default-expression>nextval('id_watermark_seq'::regclass)</default-expression>
+    </column>
+    <column id="35" parent="17" name="document_id">
+      <state-number>826</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+    </column>
+    <column id="36" parent="17" name="watermark_watermark">
+      <state-number>826</state-number>
+      <mandatory>1</mandatory>
+      <data-type>bytea|0</data-type>
+    </column>
+    <column id="37" parent="17" name="watermark_text">
+      <state-number>916</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(255)|0</data-type>
+    </column>
+    <index id="38" parent="17" name="watermark_pkey">
+      <object-id>32988</object-id>
+      <columns>watermark_id</columns>
+      <desc-columns />
+      <unique>1</unique>
+    </index>
+    <index id="39" parent="17" name="watermark_pkey">
+      <object-id>41250</object-id>
+      <columns>watermark_id</columns>
+      <desc-columns />
+      <unique>1</unique>
+    </index>
+    <index id="40" parent="17" name="w_watermark_watermark_text_uindex">
+      <object-id>41259</object-id>
+      <columns>watermark_text</columns>
+      <desc-columns />
+      <unique>1</unique>
+    </index>
+    <index id="41" parent="17" name="w_watermark_watermark_text_index">
+      <object-id>41260</object-id>
+      <columns>watermark_text</columns>
+      <desc-columns />
+    </index>
+    <key id="42" parent="17" name="watermark_pkey">
+      <object-id>41251</object-id>
+      <columns>watermark_id</columns>
+      <underlying-index>watermark_pkey</underlying-index>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="43" parent="17" name="w_watermark_document_id_fkey">
+      <object-id>32995</object-id>
+      <columns>document_id</columns>
+      <ref-key>~.w_document.document_pkey</ref-key>
+      <cascade-update-rule>restrict</cascade-update-rule>
+      <cascade-delete-rule>restrict</cascade-delete-rule>
+    </foreign-key>
+  </database-model>
+</dataSource>
