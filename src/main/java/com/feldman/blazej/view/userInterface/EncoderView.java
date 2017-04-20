@@ -18,6 +18,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
@@ -49,53 +50,31 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
 
     private Upload upload2;
     private TextField encodeText;
-    private Button leave;
 
     @PostConstruct
     private void init() {
         setSizeFull();
         setMargin(true);
         setSpacing(true);
-        setCaption("Dodawanie dokumentu...");
-        WUploadPanel uploadPanel2 = new WUploadPanel("Dodaj dokument [Dozwolony format *.doc lub *.docx]", new DocumentReceiver(configuration.getFilepath()));
 
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.setMargin(true);
-        horizontalLayout.setSpacing(true);
-
+        WUploadPanel uploadPanel2 = new WUploadPanel("Dodaj dokument [Dozwolony format *.docx]", new DocumentReceiver(configuration.getFilepath()));
+        VerticalLayout verticalLayout = uploadPanel2.getLayoutContainer();
         upload2 = uploadPanel2.getUpload();
         upload2.addFailedListener(this);
         upload2.addSucceededListener(this);
         upload2.addStartedListener(this);
 
-        leave = new Button("Cofnij");
-        leave.setHeight("30");
-        leave.setWidth("250");
-        leave.addClickListener((Button.ClickListener)event-> {
-            getUI().getNavigator().navigateTo(ViewNames.MENU_VIEW);
-        });
-
         encodeText = new TextField();
-        encodeText.setWidth("700");
-        encodeText.setHeight("30");
+        encodeText.setWidth("300");
+        encodeText.setHeight("32");
         encodeText.setValue("");
 
-        Label content = new Label("Dane dokumentu: ");
-        content.setHeight("30");
-        content.setWidth("150");
-
         addComponent(uploadPanel2);
-        addComponent(horizontalLayout);
-        addComponent(leave);
+        verticalLayout.addComponent(encodeText);
 
-        horizontalLayout.addComponent(content);
-        horizontalLayout.addComponent(encodeText);
+        setComponentAlignment(uploadPanel2,Alignment.MIDDLE_CENTER);
+        verticalLayout.setComponentAlignment(encodeText,Alignment.MIDDLE_CENTER);
 
-        horizontalLayout.setComponentAlignment(encodeText,Alignment.MIDDLE_CENTER);
-        horizontalLayout.setComponentAlignment(content,Alignment.MIDDLE_CENTER);
-
-        setComponentAlignment(uploadPanel2, Alignment.MIDDLE_CENTER);
-        setComponentAlignment(leave,Alignment.MIDDLE_RIGHT);
     }
 
     @Override

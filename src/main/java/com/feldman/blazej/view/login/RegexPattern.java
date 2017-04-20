@@ -1,4 +1,4 @@
-package com.feldman.blazej.view.newUser;
+package com.feldman.blazej.view.login;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -2,8 +2,7 @@ package com.feldman.blazej.presenter;
 
 import com.feldman.blazej.model.User;
 import com.feldman.blazej.services.UserService;
-import com.feldman.blazej.util.AuthorizationUtils;
-import com.feldman.blazej.view.newUser.RegexPattern;
+import com.feldman.blazej.view.login.RegexPattern;
 import com.vaadin.spring.annotation.UIScope;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

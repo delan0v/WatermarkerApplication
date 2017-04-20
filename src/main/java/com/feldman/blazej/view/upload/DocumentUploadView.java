@@ -3,11 +3,12 @@ package com.feldman.blazej.view.upload;
 import com.feldman.blazej.configuration.ApplicationConfiguration;
 import com.feldman.blazej.presenter.DocumentPresenter;
 import com.feldman.blazej.presenter.WatermarkPresenter;
+import com.feldman.blazej.util.AuthorizationUtils;
 import com.feldman.blazej.util.FileUtils;
 import com.feldman.blazej.util.IncorrectFormatException;
-import com.feldman.blazej.util.StringGenerator;
 import com.feldman.blazej.view.common.ViewNames;
 import com.feldman.blazej.view.component.DocumentReceiver;
+import com.feldman.blazej.view.component.MuiThemeView;
 import com.feldman.blazej.view.component.WUploadPanel;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.WriterException;
@@ -16,9 +17,11 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
@@ -39,7 +42,7 @@ import java.security.NoSuchAlgorithmException;
 @Component
 @SpringView(name = ViewNames.DOCUMENT_UPLOAD_VIEW)
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DocumentUploadView extends VerticalLayout implements View, Upload.StartedListener, Upload.SucceededListener, Upload.FailedListener {
+public class DocumentUploadView extends GridLayout implements View, Upload.StartedListener, Upload.SucceededListener, Upload.FailedListener {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentUploadView.class);
 
@@ -54,14 +57,37 @@ public class DocumentUploadView extends VerticalLayout implements View, Upload.S
     private TextField textField;
     private Button leave;
     private Label infoLabel;
+    private Panel mainPanel;
+    private VerticalLayout mainVerticalLayout;
+    private MuiThemeView muiThemeView;
+    private HorizontalLayout middleHorizontalLayout;
+    private HorizontalLayout footerLayout;
+    private VerticalLayout rightPanel;
 
     @PostConstruct
     private void init() {
+
         setSizeFull();
-        setMargin(true);
-        setSpacing(true);
-        setCaption("Dodawanie dokumentu...");
-        WUploadPanel uploadPanel = new WUploadPanel("Dodaj dokument [Dozwolony format *.doc lub *.docx]", new DocumentReceiver(configuration.getFilepath()));
+        mainPanel = new Panel();
+        mainPanel.setHeight("100%");
+        mainPanel.setWidth("80%");
+
+        mainVerticalLayout = new VerticalLayout();
+        mainVerticalLayout.setSizeFull();
+
+        muiThemeView = new MuiThemeView();
+        muiThemeView.setSizeFull();
+
+        middleHorizontalLayout = new HorizontalLayout();
+        middleHorizontalLayout.setSizeFull();
+
+        footerLayout = new HorizontalLayout();
+        footerLayout.setSizeFull();
+
+        rightPanel = new VerticalLayout();
+        rightPanel.setSizeUndefined();
+
+        WUploadPanel uploadPanel = new WUploadPanel("Dodaj dokument [Dozwolony format *.docx]", new DocumentReceiver(configuration.getFilepath()));
         HorizontalLayout horizontalLayout = new HorizontalLayout();
 
         upload = uploadPanel.getUpload();
@@ -70,32 +96,48 @@ public class DocumentUploadView extends VerticalLayout implements View, Upload.S
         upload.addStartedListener(this);
 
         textField = new TextField();
-        textField.setHeight("30");
+        textField.setHeight("32");
         textField.setWidth("300");
         textField.setValue("");
 
         infoLabel = new Label("Podaj opis dokumentu: ");
-        infoLabel.setHeight("30");
-        infoLabel.setWidth("185");
+        infoLabel.setHeight("32");
+        infoLabel.setWidth("300");
 
 
-        leave = new Button("Cofnij");
-        leave.setHeight("30");
-        leave.setWidth("250");
+        leave = new Button("Wyloguj");
+        leave.setHeight("32");
+        leave.setWidth("300");
         leave.addClickListener((Button.ClickListener)event-> {
-            getUI().getNavigator().navigateTo(ViewNames.MENU_VIEW);
+            getUI().getNavigator().navigateTo(ViewNames.LOGIN_VIEW);
+            AuthorizationUtils.saveUsernameInSession(null);
         });
 
-        addComponent(uploadPanel);
-        addComponent(horizontalLayout);
-        horizontalLayout.addComponent(infoLabel);
-        horizontalLayout.addComponent(textField);
-        horizontalLayout.addComponent(leave);
-        setComponentAlignment(horizontalLayout, Alignment.MIDDLE_CENTER);
-        setComponentAlignment(uploadPanel, Alignment.MIDDLE_CENTER);
-        horizontalLayout.setComponentAlignment(textField, Alignment.MIDDLE_LEFT);
-        horizontalLayout.setComponentAlignment(leave,Alignment.MIDDLE_RIGHT);
-        horizontalLayout.setComponentAlignment(infoLabel,Alignment.MIDDLE_LEFT);
+
+        addComponent(mainPanel);
+        mainPanel.setContent(mainVerticalLayout);
+
+        rightPanel.addComponent(uploadPanel);
+        rightPanel.addComponent(infoLabel);
+        rightPanel.addComponent(textField);
+        rightPanel.addComponent(leave);
+
+        mainVerticalLayout.addComponent(muiThemeView);
+        mainVerticalLayout.addComponent(middleHorizontalLayout);
+        mainVerticalLayout.addComponent(footerLayout);
+
+        middleHorizontalLayout.addComponent(rightPanel);
+
+        setComponentAlignment(mainPanel,Alignment.MIDDLE_CENTER);
+        mainVerticalLayout.setComponentAlignment(muiThemeView,Alignment.TOP_CENTER);
+        mainVerticalLayout.setComponentAlignment(middleHorizontalLayout,Alignment.MIDDLE_CENTER);
+        mainVerticalLayout.setComponentAlignment(footerLayout,Alignment.MIDDLE_CENTER);
+        middleHorizontalLayout.setComponentAlignment(rightPanel,Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(uploadPanel, Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(textField,Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(infoLabel,Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(leave,Alignment.MIDDLE_CENTER);
+
     }
 
     @Override
@@ -119,7 +161,7 @@ public class DocumentUploadView extends VerticalLayout implements View, Upload.S
 
     @Override
     public void uploadSucceeded(Upload.SucceededEvent event) {
-        StringGenerator.QR_TEXT = textField.getValue();
+        watermarkPresenter.setQrCodeContentText(textField.getValue());
         logger.debug("Upload dokumentu zakończony");
         logger.debug("Procesowanie dokumentu... >>>");
         File file = new File("C:\\"+configuration.getFilepath()+"\\"+event.getFilename());

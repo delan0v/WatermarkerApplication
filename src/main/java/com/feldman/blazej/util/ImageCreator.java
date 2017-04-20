@@ -35,12 +35,14 @@ public class ImageCreator {
     private static String qrcFilePath = "C:\\tmp\\qrcodes\\";
     private static String docFilePath = "C:\\tmp\\doc\\";
 
+    @Autowired
+    private WatermarkPresenter watermarkPresenter;
 
 
     public String addImageToXwpf(XWPFDocument xwpfDocument) throws IOException, NotFoundException, WriterException, InvalidFormatException {
 
         QRCodeNameGenerator qrCodeNameGenerator = new QRCodeNameGenerator();
-        QRCode qrCode = new QRCode(qrCodeNameGenerator.getLocalization(), qrcFilePath + qrCodeNameGenerator.getFileName());
+        QRCode qrCode = new QRCode(watermarkPresenter.getQrCodeHash(), qrcFilePath + qrCodeNameGenerator.getFileName());
         qrCode.create();
         InputStream inputStream = new FileInputStream(qrcFilePath + qrCodeNameGenerator.getFileName());
         xwpfDocument.createParagraph().createRun().addPicture(inputStream, Document.PICTURE_TYPE_PNG, "qrcode", Units.toEMU(200), Units.toEMU(200));

@@ -1,5 +1,8 @@
-package com.feldman.blazej.view.newUser;
+package com.feldman.blazej.view.login;
 
+/**
+ * Created by Błażej on 20.04.2017.
+ */
 import com.feldman.blazej.presenter.UserPresenter;
 import com.feldman.blazej.util.AuthorizationUtils;
 import com.feldman.blazej.view.common.ViewNames;
@@ -25,7 +28,6 @@ public class NewUserView extends VerticalLayout implements View {
     @Autowired
     UserPresenter userPresenter;
 
-    private Button back;
     private TextField name;
     private TextField surname;
     private TextField email;
@@ -35,44 +37,33 @@ public class NewUserView extends VerticalLayout implements View {
     private String flag;
 
     public NewUserView() {
-        setMargin(true);
-        setSpacing(true);
     }
 
     @PostConstruct
     public void initView() {
-        back = new Button("Cofnij");
-        back.setWidth("250");
-        back.setHeight("30");
-        back.addClickListener(new Button.ClickListener() {
 
-            @Override
-            public void buttonClick(Button.ClickEvent clickEvent) {
-                getUI().getNavigator().navigateTo(ViewNames.LOGIN_VIEW);
-            }
-        });
         name = new TextField("Imię");
         name.setWidth("250");
-        name.setHeight("30");
+        name.setHeight("32");
 
         surname = new TextField("Nazwisko");
-        surname.setHeight("30");
+        surname.setHeight("32");
         surname.setWidth("250");
 
         email = new TextField("E-mail");
-        email.setHeight("30");
+        email.setHeight("32");
         email.setWidth("250");
 
         userLogin = new TextField("Login");
-        userLogin.setHeight("30");
+        userLogin.setHeight("32");
         userLogin.setWidth("250");
 
         password = new TextField("Hasło");
-        password.setHeight("30");
+        password.setHeight("32");
         password.setWidth("250");
 
         createUser = new Button("Utwórz konto");
-        createUser.setHeight("30");
+        createUser.setHeight("32");
         createUser.setWidth("250");
         createUser.addClickListener(new Button.ClickListener() {
             @Override
@@ -86,7 +77,6 @@ public class NewUserView extends VerticalLayout implements View {
             }
         });
 
-        addComponent(back);
         addComponent(name);
         addComponent(surname);
         addComponent(email);
@@ -94,7 +84,6 @@ public class NewUserView extends VerticalLayout implements View {
         addComponent(password);
         addComponent(createUser);
 
-        setComponentAlignment(back, Alignment.TOP_LEFT);
         setComponentAlignment(name, Alignment.MIDDLE_CENTER);
         setComponentAlignment(surname, Alignment.MIDDLE_CENTER);
         setComponentAlignment(email, Alignment.MIDDLE_CENTER);

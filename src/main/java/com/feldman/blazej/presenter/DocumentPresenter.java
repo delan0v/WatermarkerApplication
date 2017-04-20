@@ -3,7 +3,6 @@ package com.feldman.blazej.presenter;
 import com.feldman.blazej.helper.DocumentReader;
 import com.feldman.blazej.model.Document;
 import com.feldman.blazej.model.User;
-import com.feldman.blazej.qrCode.QRCode;
 import com.feldman.blazej.qrCode.QRCodeReader;
 import com.feldman.blazej.services.DocumentService;
 import com.feldman.blazej.util.AuthorizationUtils;
@@ -15,7 +14,6 @@ import com.google.zxing.WriterException;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Upload;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
@@ -93,6 +91,7 @@ public class DocumentPresenter {
 
     public Document saveNewDocument(Upload.SucceededEvent event, File file) throws IOException, NoSuchAlgorithmException, IncorrectFormatException, WriterException, InvalidFormatException, NotFoundException {
 
+        watermarkPresenter.setQrCodeHash(HashCoder.getMd5Hash(createBytesString(file)));
         XWPFDocument xwpfDocument = (XWPFDocument) documentReader.readDocument(event.getFilename());
         imageCreator.addImageToXwpf(xwpfDocument);
         Document document = new Document();
@@ -100,14 +99,14 @@ public class DocumentPresenter {
         document.setUserId(userPresenter.searchUserByLogin(AuthorizationUtils.getUsernameFromSession()));
         document.setName(event.getFilename());
         document.setContent("");
-        // TODO: setContent sie wywala, trzeba ogarnąć metodę serializującą;
+        //TODO: setContent sie wywala, trzeba ogarnąć metodę serializującą;
         //document.setContent(createBytesString(file));
-        document.setDocHashCode( HashCoder.getSha256DigestAsString(createBytesString(file)));
+        document.setDocHashCode(watermarkPresenter.getQrCodeHash());
         addNewDocument(document);
         return document;
     }
     public String createBytesString(File file) throws UnsupportedEncodingException {
-        byte [] b = new byte[(int) file.length()];
+        byte [] b = new byte[(int) file.length()-1];
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             fileInputStream.read(b);

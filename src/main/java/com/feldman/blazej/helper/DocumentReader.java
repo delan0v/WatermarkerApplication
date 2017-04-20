@@ -1,20 +1,13 @@
 package com.feldman.blazej.helper;
 
 import com.feldman.blazej.configuration.ApplicationConfiguration;
-import com.feldman.blazej.presenter.WatermarkPresenter;
-import com.feldman.blazej.repository.WatermarkRepository;
 import com.feldman.blazej.util.FileUtils;
-import com.feldman.blazej.util.ImageCreator;
 import com.feldman.blazej.util.IncorrectFormatException;
-import com.feldman.blazej.util.StringGenerator;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.WriterException;
-import org.apache.poi.POIDocument;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,8 +68,6 @@ public class DocumentReader {
             e.printStackTrace();
             return null;
         }
-        StringGenerator stringGenerator = new StringGenerator(32);
-
         return document;
     }
 

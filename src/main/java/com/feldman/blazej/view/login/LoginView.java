@@ -4,8 +4,8 @@ import com.feldman.blazej.model.User;
 import com.feldman.blazej.presenter.UserPresenter;
 import com.feldman.blazej.util.AuthorizationUtils;
 import com.feldman.blazej.view.common.ViewNames;
-import com.vaadin.annotations.StyleSheet;
-import com.vaadin.annotations.Theme;
+import com.feldman.blazej.view.component.MuiThemeView;
+import com.feldman.blazej.view.userInterface.EncoderView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
@@ -24,80 +24,149 @@ import javax.annotation.PostConstruct;
 @SpringView(name = ViewNames.LOGIN_VIEW)
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class LoginView extends VerticalLayout implements View {
+public class LoginView extends GridLayout implements View {
 
     @Autowired
-    UserPresenter userPresenter;
+    public UserPresenter userPresenter;
+    @Autowired
+    public EncoderView encoderView;
+    @Autowired
+    public NewUserView newUserView;
 
     private TextField login;
-    private PasswordField password;
-    private Button executeLog;
-
-    public LoginView() {
-        setMargin(true);
-        setSpacing(true);
-        setStyleName("C\\:Progrejming\\Application\\src\\main\\webapp\\VAADIN\\themes\\mythme\\styles.css");
-    }
+    private PasswordField passwordField;
+    private Button logIn;
+    private Button newUser;
+    private Button link;
+    private Button getWatermarkerReader;
+    private Panel mainPanel;
+    private VerticalLayout mainVerticalLayout;
+    private MuiThemeView muiThemeView;
+    private HorizontalLayout middleHorizontalLayout;
+    private HorizontalLayout footerLayout;
+    private VerticalLayout rightPanel;
+    private Button helper;
 
     @PostConstruct
     private void init() {
 
-        login = new TextField("Login:");
-        login.setHeight("30");
-        login.setWidth("250");
-        login.setVisible(false);
+        setSizeFull();
+        mainPanel = new Panel();
+        mainPanel.setHeight("100%");
+        mainPanel.setWidth("80%");
 
-        executeLog = new Button("Zaloguj");
-        executeLog.setHeight("30");
-        executeLog.setWidth("250");
-        executeLog.setVisible(false);
-        executeLog.addClickListener((Button.ClickListener) event -> {
-            User user = userPresenter.searchUserByLoginAndPassword(login.getValue(), password.getValue());
+        mainVerticalLayout = new VerticalLayout();
+        mainVerticalLayout.setSizeFull();
+
+        muiThemeView = new MuiThemeView();
+        muiThemeView.setSizeFull();
+
+        encoderView.setSizeFull();
+        newUserView.setSizeUndefined();
+
+        middleHorizontalLayout = new HorizontalLayout();
+        middleHorizontalLayout.setSizeFull();
+
+        footerLayout = new HorizontalLayout();
+        footerLayout.setSizeFull();
+
+        rightPanel = new VerticalLayout();
+        rightPanel.setSizeUndefined();
+        rightPanel.setMargin(true);
+
+        login = new TextField("Login:");
+        login.setHeight("32");
+        login.setWidth("250");
+
+        passwordField = new PasswordField("Hasło:");
+        passwordField.setHeight("32");
+        passwordField.setWidth("250");
+
+        logIn = new Button("Zaloguj");
+        logIn.setHeight("32");
+        logIn.setWidth("250");
+        logIn.addClickListener((Button.ClickListener) event -> {
+            User user = userPresenter.searchUserByLoginAndPassword(login.getValue(), passwordField.getValue());
             if (user != null) {
                 AuthorizationUtils.saveUsernameInSession(user.getUserLogin());
-                getUI().getNavigator().navigateTo(ViewNames.MENU_VIEW);
+                getUI().getNavigator().navigateTo(ViewNames.DOCUMENT_UPLOAD_VIEW);
             }
             else{
                 Notification.show("Podałeś błędny login bądź hasło");
             }
         });
 
-        password = new PasswordField("Hasło:");
-        password.setHeight("30");
-        password.setWidth("250");
-        password.setVisible(false);
-
-        Button logIn = new Button("Logowanie");
-        logIn.setWidth("250");
-        logIn.setHeight("30");
-        logIn.addClickListener((Button.ClickListener) event -> {
-            login.setVisible(true);
-            password.setVisible(true);
-            executeLog.setVisible(true);
+        newUser = new Button("Nowy użytkownik");
+        newUser.setHeight("32");
+        newUser.setWidth("250");
+        newUser.addClickListener((Button.ClickListener)event->{
+            encoderView.setVisible(false);
+            newUserView.setVisible(true);
         });
 
-        Button newAccount = new Button("Nowy użytkownik");
-        newAccount.setWidth("250");
-        newAccount.setHeight("30");
-        newAccount.addClickListener((Button.ClickListener) event -> getUI().getNavigator().navigateTo(ViewNames.NEW_USER_VIEW));
+        helper = new Button("Pomoc");
+        helper.setHeight("32");
+        helper.setWidth("250");
+        helper.addClickListener((Button.ClickListener)event->{
+            encoderView.setVisible(false);
+            newUserView.setVisible(false);
+        });
 
-        addComponent(logIn);
-        addComponent(newAccount);
-        addComponent(login);
-        addComponent(password);
-        addComponent(executeLog);
+        getWatermarkerReader = new Button("Odczytaj watermark");
+        getWatermarkerReader.setHeight("32");
+        getWatermarkerReader.setWidth("250");
+        getWatermarkerReader.addClickListener((Button.ClickListener)event->{
+            encoderView.setVisible(true);
+            newUserView.setVisible(false);
+        });
 
-        setComponentAlignment(logIn, Alignment.TOP_LEFT);
-        setComponentAlignment(newAccount, Alignment.TOP_LEFT);
-        setComponentAlignment(login, Alignment.BOTTOM_CENTER);
-        setComponentAlignment(password, Alignment.BOTTOM_CENTER);
-        setComponentAlignment(executeLog, Alignment.BOTTOM_CENTER);
+        link = new Button(("Strona główna"));
+        link.setHeight("32");
+        link.setWidth("250");
+        link.addClickListener((Button.ClickListener)event->{
+            getUI().getPage().open("http:////www.wat.edu.pl/","wat");
+        });
+
+
+        addComponent(mainPanel);
+        mainPanel.setContent(mainVerticalLayout);
+
+        rightPanel.addComponent(login);
+        rightPanel.addComponent(passwordField);
+        rightPanel.addComponent(logIn);
+        rightPanel.addComponent(newUser);
+        rightPanel.addComponent(helper);
+        rightPanel.addComponent(getWatermarkerReader);
+        rightPanel.addComponent(link);
+
+        mainVerticalLayout.addComponent(muiThemeView);
+        mainVerticalLayout.addComponent(middleHorizontalLayout);
+        mainVerticalLayout.addComponent(footerLayout);
+        middleHorizontalLayout.addComponent(encoderView);
+        middleHorizontalLayout.addComponent(newUserView);
+        middleHorizontalLayout.addComponent(rightPanel);
+
+        setComponentAlignment(mainPanel,Alignment.MIDDLE_CENTER);
+        mainVerticalLayout.setComponentAlignment(muiThemeView,Alignment.TOP_CENTER);
+        mainVerticalLayout.setComponentAlignment(middleHorizontalLayout,Alignment.MIDDLE_CENTER);
+        mainVerticalLayout.setComponentAlignment(footerLayout,Alignment.MIDDLE_CENTER);
+        middleHorizontalLayout.setComponentAlignment(rightPanel,Alignment.TOP_RIGHT);
+        middleHorizontalLayout.setComponentAlignment(encoderView,Alignment.MIDDLE_CENTER);
+        middleHorizontalLayout.setComponentAlignment(newUserView,Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(login, Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(passwordField,Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(logIn,Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(newUser,Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(helper,Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(getWatermarkerReader,Alignment.MIDDLE_CENTER);
+        rightPanel.setComponentAlignment(link,Alignment.MIDDLE_CENTER);
+
     }
-
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
         login.setValue("");
-        password.setValue("");
-        Notification.show("Witaj na naszej stronie!");
+        passwordField.setValue("");
+        encoderView.setVisible(false);
+        newUserView.setVisible(false);
     }
 }
