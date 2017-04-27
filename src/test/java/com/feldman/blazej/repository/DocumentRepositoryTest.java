@@ -65,7 +65,7 @@ public class DocumentRepositoryTest extends BaseSpringDatabseConfig implements R
         User user = TestDataProviderUtil.newTestUser();
         user = userRepository.save(user);
         documentToUpdate.setUserId(user);
-        documentToUpdate.setContent("newDocumentsContent");
+        //documentToUpdate.setContent("newDocumentsContent");
         documentToUpdate.setName("newDocument");
         documentRepository.save(documentToUpdate);
 

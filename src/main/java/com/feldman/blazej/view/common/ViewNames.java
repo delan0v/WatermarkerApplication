@@ -10,4 +10,5 @@ public interface ViewNames {
     String MENU_VIEW = "menuView";
     String ENCODER_VIEW = "encoderView";
     String NEW_USER_VIEW = "newUserView";
+    String DECODER_VIEW = "decoderView";
 }

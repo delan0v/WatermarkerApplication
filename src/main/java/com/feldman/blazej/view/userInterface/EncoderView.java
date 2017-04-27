@@ -7,18 +7,14 @@ import com.feldman.blazej.util.IncorrectFormatException;
 import com.feldman.blazej.view.common.ViewNames;
 import com.feldman.blazej.view.component.DocumentReceiver;
 import com.feldman.blazej.view.component.WUploadPanel;
-import com.feldman.blazej.view.upload.DocumentUploadView;
+import com.feldman.blazej.view.upload.AccountView;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.WriterException;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
@@ -41,7 +37,7 @@ import java.io.IOException;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EncoderView extends VerticalLayout implements View, Upload.StartedListener, Upload.SucceededListener, Upload.FailedListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(DocumentUploadView.class);
+    private static final Logger logger = LoggerFactory.getLogger(AccountView.class);
 
     @Autowired
     private ApplicationConfiguration configuration;
@@ -57,7 +53,7 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
         setMargin(true);
         setSpacing(true);
 
-        WUploadPanel uploadPanel2 = new WUploadPanel("Dodaj dokument [Dozwolony format *.docx]", new DocumentReceiver(configuration.getFilepath()));
+        WUploadPanel uploadPanel2 = new WUploadPanel("Dodaj dokument do odkodowania [Dozwolony format *.docx]", new DocumentReceiver(configuration.getFilepath()));
         VerticalLayout verticalLayout = uploadPanel2.getLayoutContainer();
         upload2 = uploadPanel2.getUpload();
         upload2.addFailedListener(this);
@@ -65,7 +61,7 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
         upload2.addStartedListener(this);
 
         encodeText = new TextField();
-        encodeText.setWidth("300");
+        encodeText.setWidth("400");
         encodeText.setHeight("32");
         encodeText.setValue("");
 

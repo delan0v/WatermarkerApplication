@@ -26,7 +26,7 @@ public class TestDataProviderUtil {
         Document document = new Document();
 
         document.setName("documentName");
-        document.setContent("documentsContent");
+        //document.setContent("documentsContent");
         document.setUserId(user);
 
         return document;

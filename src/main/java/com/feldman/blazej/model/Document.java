@@ -25,9 +25,11 @@ public class Document {
     private String name;
 
     @Column(name = "document_document")
-    private String content;
+    private byte [] content;
 
     @Column(name = "document_hash_code")
     private String docHashCode;
 
+    @Column(name = "document_protection")
+    private String protection;
 }

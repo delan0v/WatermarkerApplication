@@ -3,7 +3,7 @@ package com.feldman.blazej.view;
 import com.feldman.blazej.view.common.ViewNames;
 import com.feldman.blazej.view.login.LoginView;
 import com.feldman.blazej.view.login.NewUserView;
-import com.feldman.blazej.view.upload.DocumentUploadView;
+import com.feldman.blazej.view.upload.AccountView;
 import com.feldman.blazej.view.userInterface.EncoderView;
 import com.feldman.blazej.view.userInterface.MenuView;
 import com.vaadin.annotations.Theme;
@@ -24,7 +24,7 @@ public class VaadinUI extends UI {
     @Autowired
     private LoginView loginView;
     @Autowired
-    private DocumentUploadView documentView;
+    private AccountView documentView;
     @Autowired
     private MenuView menuView;
     @Autowired

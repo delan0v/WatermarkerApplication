@@ -68,6 +68,7 @@ public class DocumentPresenter {
     }
 
     public Document searchDocumentByHashCode(String hashCode) {return documentService.findByDocHashCode(hashCode);}
+
     public String showDocument(Upload.SucceededEvent event) throws IncorrectFormatException, WriterException, InvalidFormatException, NotFoundException, IOException {
 
         String showMe = "";
@@ -98,14 +99,12 @@ public class DocumentPresenter {
         document.setDocumentId(null);
         document.setUserId(userPresenter.searchUserByLogin(AuthorizationUtils.getUsernameFromSession()));
         document.setName(event.getFilename());
-        document.setContent("");
-        //TODO: setContent sie wywala, trzeba ogarnąć metodę serializującą;
-        //document.setContent(createBytesString(file));
+        document.setContent(createBytesString(file));
         document.setDocHashCode(watermarkPresenter.getQrCodeHash());
         addNewDocument(document);
         return document;
     }
-    public String createBytesString(File file) throws UnsupportedEncodingException {
+    public byte[] createBytesString(File file) throws UnsupportedEncodingException {
         byte [] b = new byte[(int) file.length()-1];
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
@@ -115,6 +114,6 @@ public class DocumentPresenter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new String(b);
+        return b;
     }
 }

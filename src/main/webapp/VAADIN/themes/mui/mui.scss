@@ -7,23 +7,15 @@
   .v-button {
     background: transparent;
     text-align: left;
-    border-color: #d6c9c9;
-    border-left-width: 1px;
-    border-top-width: 1px;
-    border-bottom-width: 1px;
-    border-down-width: 1px;
+    border: 1px #d6c9c9;
     border-radius: 0;
     font-family: "Open Sans";
     font-size: 15px;
     color: #005628;
   }
   .v-panel {
-    border-color: #d6c9c9;
     background-color: white;
-    border-left-width: 2px;
-    border-top-width: 2px;
-    border-right-width: 2px;
-    border-down-width: 2px;
+    border: 2px #d6c9c9;
     font-family: "Open Sans";
     color: #005628;
   }
@@ -40,11 +32,7 @@
     color: #005628;
   }
   .v-textfield {
-    border-color: #d6c9c9;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-left-width: 1px;
-    border-bottom-width: 1px;
+    border: 1px #d6c9c9;
     border-radius: 0;
     font-family: "Open Sans";
   }
@@ -59,6 +47,19 @@
   }
   .h-slot{
     background-color: white;
+  }
+  .v-link {
+    background: transparent;
+    text-align: left;
+    border-color: #d6c9c9;
+    border-left-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+
+    border-radius: 0;
+    font-family: "Open Sans";
+    font-size: 15px;
+    color: #005628;
   }
 }
 @include mui;

@@ -8,6 +8,7 @@ import com.feldman.blazej.view.component.MuiThemeView;
 import com.feldman.blazej.view.userInterface.EncoderView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +127,6 @@ public class LoginView extends GridLayout implements View {
         link.addClickListener((Button.ClickListener)event->{
             getUI().getPage().open("http:////www.wat.edu.pl/","wat");
         });
-
 
         addComponent(mainPanel);
         mainPanel.setContent(mainVerticalLayout);

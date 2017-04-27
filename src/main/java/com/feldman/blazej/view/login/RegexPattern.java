@@ -7,11 +7,11 @@ import java.util.regex.Pattern;
  * Created by Błażej on 06.12.2016.
  */
 public class RegexPattern {
-    public static Pattern loginPattern = Pattern.compile("[a-zA-Z0-9]{5,15}");
-    public static Pattern nameAndSurnamePattern = Pattern.compile("[A-Z][a-z]+");
-    public static Pattern mailPattern = Pattern.compile("[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z]+");
-    public static Pattern passwordPattern = Pattern.compile("[a-zA-Z0-9]{6,15}");
-    public static Matcher matcher;
+    private static Pattern loginPattern = Pattern.compile("[a-zA-Z0-9]{5,15}");
+    private static Pattern nameAndSurnamePattern = Pattern.compile("[A-Z][a-z]+");
+    private static Pattern mailPattern = Pattern.compile("[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z]+");
+    private static Pattern passwordPattern = Pattern.compile("[a-zA-Z0-9]{6,15}");
+    private static Matcher matcher;
 
     public static boolean checkName(String name){
         matcher = nameAndSurnamePattern.matcher(name);

@@ -33,14 +33,14 @@ public class WUploadPanel extends Panel implements View {
         verticalLayout.setSizeUndefined();
 
         upload = new Upload(null, receiver);
-        upload.setWidth("300px");
+        upload.setWidth("400");
         upload.setHeightUndefined();
         upload.setButtonCaption(null);
         verticalLayout.addComponent(upload);
 
         Button startUploadButton = new Button("Wybierz");
         startUploadButton.setHeight("32");
-        startUploadButton.setWidth("300");
+        startUploadButton.setWidth("400");
         startUploadButton.addClickListener((Button.ClickListener) event -> {
             upload.submitUpload();
         });

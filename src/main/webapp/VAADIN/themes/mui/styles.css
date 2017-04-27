@@ -12437,7 +12437,6 @@ h1.no-margin, .v-label-h1.no-margin, h2.no-margin, .v-label-h2.no-margin, h3.no-
 	border-left-width: 2px;
 	border-top-width: 2px;
 	border-right-width: 2px;
-	border-down-width: 2px;
 	font-family: "Open Sans";
 	color: #005628;
 }
@@ -12477,4 +12476,18 @@ h1.no-margin, .v-label-h1.no-margin, h2.no-margin, .v-label-h2.no-margin, h3.no-
 
 .h-slot {
 	background-color: white;
+}
+
+.v-link {
+	background: transparent;
+	text-align: left;
+	border-color: #d6c9c9;
+	border-left-width: 1px;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-down-width: 1px;
+	border-radius: 0;
+	font-family: "Open Sans";
+	font-size: 15px;
+	color: #005628;
 }

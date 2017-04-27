@@ -14,5 +14,9 @@ public class HashCoder {
         MessageDigest md = MessageDigest.getInstance("MD5");
         return md.digest(bytesOfMessage).toString();
     }
+    public static String getMd5Hash(byte [] bytesOfMessage) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        return md.digest(bytesOfMessage).toString();
+    }
 
 }
