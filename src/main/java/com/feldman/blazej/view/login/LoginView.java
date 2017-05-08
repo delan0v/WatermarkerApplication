@@ -28,11 +28,11 @@ import javax.annotation.PostConstruct;
 public class LoginView extends GridLayout implements View {
 
     @Autowired
-    public UserPresenter userPresenter;
+    private UserPresenter userPresenter;
     @Autowired
-    public EncoderView encoderView;
+    private EncoderView encoderView;
     @Autowired
-    public NewUserView newUserView;
+    private NewUserView newUserView;
 
     private TextField login;
     private PasswordField passwordField;
@@ -164,9 +164,11 @@ public class LoginView extends GridLayout implements View {
     }
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
+        AuthorizationUtils.saveUsernameInSession(null);
         login.setValue("");
         passwordField.setValue("");
         encoderView.setVisible(false);
         newUserView.setVisible(false);
+
     }
 }

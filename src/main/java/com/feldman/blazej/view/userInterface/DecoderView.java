@@ -15,11 +15,13 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.OptionGroup;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
+import javafx.scene.control.RadioButton;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +54,10 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
     private WatermarkPresenter watermarkPresenter;
 
     private Upload upload;
-    private TextField textField;
-    private Label infoLabel;
+    public TextField textField;
+    private HorizontalLayout horizontalLayout;
+    private OptionGroup documentProtection;
+    private OptionGroup documentWatermark;
 
 
     @PostConstruct
@@ -69,18 +73,28 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
         upload.addSucceededListener(this);
         upload.addStartedListener(this);
 
-        textField = new TextField();
+        textField = new TextField("Podaj opis dokumentu");
         textField.setHeight("32");
         textField.setWidth("400");
         textField.setValue("");
 
-        infoLabel = new Label("Podaj opis dokumentu: ");
-        infoLabel.setHeight("32");
-        infoLabel.setWidth("400");
+        horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setSizeFull();
+
+        documentProtection = new OptionGroup("Dostęp do metadanych:");
+        documentProtection.addItem("Prywatny");
+        documentProtection.addItem("Publiczny");
+
+        documentWatermark = new OptionGroup("Metoda działania:");
+        documentWatermark.addItem("QrCode");
+        documentWatermark.addItem("Watermark");
 
         addComponent(uploadPanel2);
-        verticalLayout.addComponent(infoLabel);
         verticalLayout.addComponent(textField);
+        verticalLayout.addComponent(horizontalLayout);
+        horizontalLayout.addComponent(documentProtection);
+        horizontalLayout.addComponent(documentWatermark);
+
         setComponentAlignment(uploadPanel2, Alignment.MIDDLE_CENTER);
 
     }
@@ -92,11 +106,18 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
 
     @Override
     public void uploadStarted(Upload.StartedEvent event) {
-        logger.debug("Rozpoczynam upload dokumentu");
-        if (!FileUtils.isAllowedExtenstion(event.getFilename())) {
-            logger.warn("Niepoprawne rozszerzenie pliku {}, przerywam pobieranie", event.getFilename());
-            Notification.show("Niepoprawne rozszerzenie pliku");
+        if((documentProtection.getValue()==null)||(documentWatermark.getValue()==null)||textField.getValue()==""){
+            logger.debug("Nie zostały uzupełnione wszystkie pola");
+            Notification.show("Uzupełnij wszystkie pola przed zakodowaniem dokumentu!");
             upload.interruptUpload();
+        }
+        else {
+            logger.debug("Rozpoczynam upload dokumentu");
+            if (!FileUtils.isAllowedExtenstion(event.getFilename())) {
+                logger.warn("Niepoprawne rozszerzenie pliku {}, przerywam pobieranie", event.getFilename());
+                Notification.show("Niepoprawne rozszerzenie pliku");
+                upload.interruptUpload();
+            }
         }
     }
 
@@ -109,7 +130,7 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
         logger.debug("<<< Zakończono procesowanie dokumentu.");
 
         try {
-            watermarkPresenter.createWatermark(documentPresenter.saveNewDocument(event, file));
+            watermarkPresenter.createWatermark(documentPresenter.saveNewDocument(event, file,(String)documentProtection.getValue()));
             Notification.show("Dokument został zapisany w bazie danych");
             logger.debug("Dokument został zapisany w bazie danych");
         } catch (UnsupportedEncodingException e) {

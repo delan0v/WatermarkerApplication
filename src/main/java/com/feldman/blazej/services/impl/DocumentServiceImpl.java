@@ -7,6 +7,7 @@ import com.feldman.blazej.services.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,16 +44,25 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public List<Document> findAllByUserId(User userId) {
-        for (int i = 0; i < documentRepository.findAll().size(); i++) {
-            if (documentRepository.findAll().get(i).getUserId() == userId) {
-                copylist = documentRepository.findAll();
-            }
-        }
-        return copylist;
+
+        return documentRepository.findByUserId(userId);
+//        for (int i = 0; i < documentRepository.findAll().size(); i++) {
+//            if (documentRepository.findAll().get(i).getUserId() == userId) {
+//                copylist = documentRepository.findAll();
+//            }
+//        }
+//        return copylist;
     }
 
     @Override
     public Document findByDocHashCode(String docHashCode) {
         return documentRepository.findByDocHashCode(docHashCode);
     }
+
+    @Override
+    public List<Document> getAllDocuments() {
+        return documentRepository.findAll();
+    }
 }
+
+

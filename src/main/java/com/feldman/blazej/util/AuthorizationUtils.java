@@ -15,7 +15,7 @@ public class AuthorizationUtils {
         try {
             return VaadinSession.getCurrent().getAttribute(SESSION_USERNAME_KEY).toString();
         } catch (Exception e) {
-            throw new SecurityException("Brak zalogowanego użtkownika", e);
+            return null;
         }
     }
 }

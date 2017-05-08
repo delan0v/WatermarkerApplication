@@ -1,8 +1,10 @@
 package com.feldman.blazej.model;
 
+import com.vaadin.ui.ComboBox;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by Błażej on 27.10.2016.
@@ -10,14 +12,14 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "w_document")
-public class Document {
+public class Document implements Serializable {
 
     @Id
     @Column(name = "document_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long documentId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User userId;
 
@@ -32,4 +34,5 @@ public class Document {
 
     @Column(name = "document_protection")
     private String protection;
+
 }

@@ -4,6 +4,7 @@ import com.feldman.blazej.util.AuthorizationUtils;
 import com.feldman.blazej.view.common.ViewNames;
 import com.feldman.blazej.view.component.MuiThemeView;
 import com.feldman.blazej.view.userInterface.DecoderView;
+import com.feldman.blazej.view.userInterface.DocumentListView;
 import com.feldman.blazej.view.userInterface.EncoderView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -28,12 +29,12 @@ import javax.annotation.PostConstruct;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AccountView extends GridLayout implements View{
 
-    private static final Logger logger = LoggerFactory.getLogger(AccountView.class);
-
     @Autowired
     private EncoderView encoderView;
     @Autowired
     private DecoderView decoderView;
+    @Autowired
+    private DocumentListView documentListView;
 
     private Button uploadWatermarkButton;
     private Button readWatermarkFromDoc;
@@ -74,6 +75,7 @@ public class AccountView extends GridLayout implements View{
         rightLayout.setMargin(true);
 
         decoderView.setSizeFull();
+        documentListView.setSizeFull();
 
         uploadWatermarkButton = new Button("Zabezpiecz dokument");
         uploadWatermarkButton.setHeight("32");
@@ -81,6 +83,8 @@ public class AccountView extends GridLayout implements View{
         uploadWatermarkButton.addClickListener((Button.ClickListener)event->{
             decoderView.setVisible(true);
             encoderView.setVisible(false);
+            documentListView.setVisible(false);
+            decoderView.textField.setValue("");
 
         });
 
@@ -90,13 +94,17 @@ public class AccountView extends GridLayout implements View{
         readWatermarkFromDoc.addClickListener((Button.ClickListener)event->{
             decoderView.setVisible(false);
             encoderView.setVisible(true);
+            documentListView.setVisible(false);
+            encoderView.encodeText.setValue("");
         });
 
         showUserDocuments = new Button("Moje dokumenty");
         showUserDocuments.setHeight("32");
         showUserDocuments.setWidth("250");
         showUserDocuments.addClickListener((Button.ClickListener)event->{
-
+            decoderView.setVisible(false);
+            encoderView.setVisible(false);
+            documentListView.setVisible(true);
         });
 
         help = new Button("Pomoc");
@@ -110,8 +118,8 @@ public class AccountView extends GridLayout implements View{
         leave.setHeight("32");
         leave.setWidth("250");
         leave.addClickListener((Button.ClickListener)event-> {
-            getUI().getNavigator().navigateTo(ViewNames.LOGIN_VIEW);
             AuthorizationUtils.saveUsernameInSession(null);
+            getUI().getNavigator().navigateTo(ViewNames.LOGIN_VIEW);
         });
 
 
@@ -130,6 +138,7 @@ public class AccountView extends GridLayout implements View{
 
         middleHorizontalLayout.addComponent(decoderView);
         middleHorizontalLayout.addComponent(encoderView);
+        middleHorizontalLayout.addComponent(documentListView);
         middleHorizontalLayout.addComponent(rightLayout);
 
         setComponentAlignment(mainPanel,Alignment.MIDDLE_CENTER);
@@ -141,6 +150,7 @@ public class AccountView extends GridLayout implements View{
         middleHorizontalLayout.setComponentAlignment(decoderView,Alignment.MIDDLE_CENTER);
         middleHorizontalLayout.setComponentAlignment(rightLayout,Alignment.TOP_RIGHT);
         middleHorizontalLayout.setComponentAlignment(encoderView,Alignment.MIDDLE_CENTER);
+        middleHorizontalLayout.setComponentAlignment(documentListView,Alignment.MIDDLE_CENTER);
 
         rightLayout.setComponentAlignment(uploadWatermarkButton,Alignment.MIDDLE_CENTER);
         rightLayout.setComponentAlignment(readWatermarkFromDoc,Alignment.MIDDLE_CENTER);

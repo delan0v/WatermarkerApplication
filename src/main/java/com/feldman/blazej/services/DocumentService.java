@@ -19,4 +19,7 @@ public interface DocumentService {
     List<Document> findAllByUserId(User userId);
 
     Document findByDocHashCode(String md5Code);
+
+    List<Document> getAllDocuments();
+
 }

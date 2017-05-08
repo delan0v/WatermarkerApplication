@@ -11,4 +11,5 @@ public interface ViewNames {
     String ENCODER_VIEW = "encoderView";
     String NEW_USER_VIEW = "newUserView";
     String DECODER_VIEW = "decoderView";
+    String DOCUMENT_LIST_VIEW = "documentListView";
 }

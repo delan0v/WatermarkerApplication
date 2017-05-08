@@ -4,6 +4,7 @@ import com.feldman.blazej.view.common.ViewNames;
 import com.feldman.blazej.view.login.LoginView;
 import com.feldman.blazej.view.login.NewUserView;
 import com.feldman.blazej.view.upload.AccountView;
+import com.feldman.blazej.view.userInterface.DocumentListView;
 import com.feldman.blazej.view.userInterface.EncoderView;
 import com.feldman.blazej.view.userInterface.MenuView;
 import com.vaadin.annotations.Theme;
@@ -31,6 +32,8 @@ public class VaadinUI extends UI {
     private EncoderView encoderView;
     @Autowired
     private NewUserView newUserView;
+    @Autowired
+    private DocumentListView documentListView;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -40,5 +43,6 @@ public class VaadinUI extends UI {
         navigator.addView(ViewNames.MENU_VIEW,menuView);
         navigator.addView(ViewNames.ENCODER_VIEW,encoderView);
         navigator.addView(ViewNames.NEW_USER_VIEW,newUserView);
+        navigator.addView(ViewNames.DOCUMENT_LIST_VIEW,documentListView);
     }
 }

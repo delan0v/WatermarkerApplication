@@ -3,6 +3,7 @@ package com.feldman.blazej.view.userInterface;
 import com.feldman.blazej.configuration.ApplicationConfiguration;
 import com.feldman.blazej.presenter.DocumentPresenter;
 import com.feldman.blazej.util.FileUtils;
+import com.feldman.blazej.util.IncorrectAccessException;
 import com.feldman.blazej.util.IncorrectFormatException;
 import com.feldman.blazej.view.common.ViewNames;
 import com.feldman.blazej.view.component.DocumentReceiver;
@@ -45,7 +46,7 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
     private DocumentPresenter documentPresenter;
 
     private Upload upload2;
-    private TextField encodeText;
+    public TextField encodeText;
 
     @PostConstruct
     private void init() {
@@ -75,7 +76,7 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
-
+        encodeText.setValue("");
     }
 
     @Override
@@ -103,18 +104,24 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
         } catch (IncorrectFormatException e) {
             Notification.show("Problem z formatem");
             e.printStackTrace();
+            encodeText.setValue("Problem z formatem");
         } catch (WriterException e) {
             Notification.show("Problem z odczytem");
             e.printStackTrace();
+            encodeText.setValue("Problem z odczytem");
         } catch (NotFoundException e) {
             Notification.show("Nie znaleziono dokumentu");
             e.printStackTrace();
+            encodeText.setValue("Nie znaleziono dokumentu");
         } catch (IOException e) {
             Notification.show("Problem wejścia/wyjścia");
             e.printStackTrace();
+            encodeText.setValue("Problem wejścia/wyjścia");
         } catch (InvalidFormatException e) {
             Notification.show("Niezgodny format");
             e.printStackTrace();
+            encodeText.setValue("Niezgodny format");
         }
+
     }
 }
