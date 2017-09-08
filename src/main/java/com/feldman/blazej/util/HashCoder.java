@@ -1,5 +1,7 @@
 package com.feldman.blazej.util;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,14 +11,33 @@ import java.security.NoSuchAlgorithmException;
  */
 public class HashCoder {
 
-    public static String getMd5Hash(String s) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        byte[] bytesOfMessage = s.getBytes("UTF-8");
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        return md.digest(bytesOfMessage).toString();
-    }
-    public static String getMd5Hash(byte [] bytesOfMessage) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        return md.digest(bytesOfMessage).toString();
+    public static byte[] createChecksum(String filename) throws Exception {
+        InputStream fis = new FileInputStream(filename);
+
+        byte[] buffer = new byte[1024];
+        MessageDigest complete = MessageDigest.getInstance("MD5");
+        int numRead;
+
+        do {
+            numRead = fis.read(buffer);
+            if (numRead > 0) {
+                complete.update(buffer, 0, numRead);
+            }
+        } while (numRead != -1);
+
+        fis.close();
+        return complete.digest();
     }
 
+    // see this How-to for a faster way to convert
+    // a byte array to a HEX string
+    public static String getMD5Checksum(String filename) throws Exception {
+        byte[] b = createChecksum(filename);
+        String result = "";
+
+        for (int i = 0; i < b.length; i++) {
+            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return result;
+    }
 }

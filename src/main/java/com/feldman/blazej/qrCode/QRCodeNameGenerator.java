@@ -3,7 +3,7 @@ package com.feldman.blazej.qrCode;
 public class QRCodeNameGenerator {
 
     private static int id = 1;
-    private String fileName;
+    private static String fileName;
 
     public String getFileName() {
         return fileName;
@@ -13,9 +13,14 @@ public class QRCodeNameGenerator {
         this.fileName = fileName;
     }
 
-    public QRCodeNameGenerator(){
-
-        fileName = "qrcode" + id + ".png";
+    public  QRCodeNameGenerator() {
+    }
+    public void setNameForPng(){
+            fileName = "qrcode" + id + ".png";
+            id++;
+    }
+    public void setNameForJpg(){
+        fileName = "qrcode" + id + ".jpg";
         id++;
     }
 }

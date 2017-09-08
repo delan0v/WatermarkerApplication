@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.List;
 
 /**
  * Created by Błażej on 02.12.2016.
@@ -35,5 +36,8 @@ public class WatermarkServiceImpl implements WatermarkService {
         return watermarkRepository.findByWatermarkId(id);
     }
 
-
+    @Override
+    public List<Watermark> findAll(){
+        return watermarkRepository.findAll();
+    }
 }

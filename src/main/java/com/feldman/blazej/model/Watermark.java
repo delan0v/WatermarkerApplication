@@ -1,6 +1,7 @@
 package com.feldman.blazej.model;
 
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -26,4 +27,6 @@ public class Watermark {
     @Column(name = "watermark_text")
     private String watermarkText;
 
+    @Column(name = "watermark_dct")
+    private Double watermarkDct;
 }

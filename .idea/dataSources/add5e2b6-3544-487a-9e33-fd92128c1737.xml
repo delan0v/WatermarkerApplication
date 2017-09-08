@@ -9,8 +9,8 @@
     </database>
     <schema id="3" parent="2" name="public">
       <ObjectId>2200</ObjectId>
-      <IntrospectionTimestamp>2017-04-27.13:56:15.268</IntrospectionTimestamp>
-      <IntrospectionStateNumber>1049</IntrospectionStateNumber>
+      <IntrospectionTimestamp>2017-09-06.14:00:30.463</IntrospectionTimestamp>
+      <IntrospectionStateNumber>1147</IntrospectionStateNumber>
       <Current>1</Current>
       <Visible>1</Visible>
     </schema>
@@ -52,7 +52,7 @@
     </table>
     <table id="14" parent="3" name="w_watermark">
       <ObjectId>32969</ObjectId>
-      <StateNumber>962</StateNumber>
+      <StateNumber>1147</StateNumber>
     </table>
     <column id="15" parent="12" name="document_id">
       <Position>1</Position>
@@ -150,40 +150,54 @@
       <Primary>1</Primary>
     </key>
     <column id="32" parent="14" name="watermark_id">
+      <Position>1</Position>
       <DataType>varchar(255)|0</DataType>
       <NotNull>1</NotNull>
       <StateNumber>913</StateNumber>
       <DefaultExpression>nextval(&apos;id_watermark_seq&apos;::regclass)</DefaultExpression>
     </column>
     <column id="33" parent="14" name="document_id">
+      <Position>2</Position>
       <DataType>integer|0</DataType>
       <NotNull>1</NotNull>
       <StateNumber>826</StateNumber>
     </column>
     <column id="34" parent="14" name="watermark_watermark">
+      <Position>3</Position>
       <DataType>bytea|0</DataType>
       <NotNull>1</NotNull>
       <StateNumber>826</StateNumber>
     </column>
     <column id="35" parent="14" name="watermark_text">
+      <Position>4</Position>
       <DataType>varchar(255)|0</DataType>
       <NotNull>1</NotNull>
       <StateNumber>916</StateNumber>
     </column>
-    <index id="36" parent="14" name="watermark_pkey">
+    <column id="36" parent="14" name="watermark_dct">
+      <Position>5</Position>
+      <DataType>double precision|0</DataType>
+      <StateNumber>1147</StateNumber>
+      <DefaultExpression>0</DefaultExpression>
+    </column>
+    <index id="37" parent="14" name="watermark_pkey">
       <ObjectId>41250</ObjectId>
+      <ColNames>watermark_id</ColNames>
       <Unique>1</Unique>
     </index>
-    <index id="37" parent="14" name="w_watermark_watermark_text_index">
+    <index id="38" parent="14" name="w_watermark_watermark_text_index">
       <ObjectId>41260</ObjectId>
+      <ColNames>watermark_text</ColNames>
     </index>
-    <key id="38" parent="14" name="watermark_pkey">
+    <key id="39" parent="14" name="watermark_pkey">
       <ObjectId>41251</ObjectId>
+      <ColNames>watermark_id</ColNames>
       <UnderlyingIndexName>watermark_pkey</UnderlyingIndexName>
       <Primary>1</Primary>
     </key>
-    <foreign-key id="39" parent="14" name="w_watermark_document_id_fkey">
+    <foreign-key id="40" parent="14" name="w_watermark_document_id_fkey">
       <ObjectId>32995</ObjectId>
+      <ColNames>document_id</ColNames>
       <RefTableName>w_document</RefTableName>
       <RefKeyName>document_pkey</RefKeyName>
       <RefColNames>document_id</RefColNames>

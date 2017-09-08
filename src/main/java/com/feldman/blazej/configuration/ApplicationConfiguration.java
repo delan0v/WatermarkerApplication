@@ -12,4 +12,9 @@ public class ApplicationConfiguration {
     @Getter
     @Value("${save.temporary.uploaded.files.filepath}")
     private String filepath;
+
+    public String qrcFilePathShow =  "C:\\tmp\\qrcodesToRead\\";
+    public String qrcFilePath = "C:\\tmp\\qrcodes\\";
+    public String docFilePath = "C:\\tmp\\doc\\";
+
 }

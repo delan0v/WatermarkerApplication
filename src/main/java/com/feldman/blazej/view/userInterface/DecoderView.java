@@ -1,6 +1,7 @@
 package com.feldman.blazej.view.userInterface;
 
 import com.feldman.blazej.configuration.ApplicationConfiguration;
+import com.feldman.blazej.model.Document;
 import com.feldman.blazej.presenter.DocumentPresenter;
 import com.feldman.blazej.presenter.WatermarkPresenter;
 import com.feldman.blazej.util.FileUtils;
@@ -123,6 +124,7 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
 
     @Override
     public void uploadSucceeded(Upload.SucceededEvent event) {
+        Document document;
         watermarkPresenter.setQrCodeContentText(textField.getValue());
         logger.debug("Upload dokumentu zakończony");
         logger.debug("Procesowanie dokumentu... >>>");
@@ -130,7 +132,13 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
         logger.debug("<<< Zakończono procesowanie dokumentu.");
 
         try {
-            watermarkPresenter.createWatermark(documentPresenter.saveNewDocument(event, file,(String)documentProtection.getValue()));
+            if(documentWatermark.getValue().toString().equals("Watermark")){
+                document = documentPresenter.saveNewDocument(event, file, (String) documentProtection.getValue(),true);
+                watermarkPresenter.createWatermark(document,true);
+            }else {
+                document = documentPresenter.saveNewDocument(event, file, (String) documentProtection.getValue(),false);
+                watermarkPresenter.createWatermark(document,false);
+            }
             Notification.show("Dokument został zapisany w bazie danych");
             logger.debug("Dokument został zapisany w bazie danych");
         } catch (UnsupportedEncodingException e) {
@@ -148,6 +156,8 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
         } catch (InvalidFormatException e) {
             e.printStackTrace();
         } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

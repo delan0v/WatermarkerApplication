@@ -105,6 +105,7 @@ public class AccountView extends GridLayout implements View{
             decoderView.setVisible(false);
             encoderView.setVisible(false);
             documentListView.setVisible(true);
+            documentListView.refresh();
         });
 
         help = new Button("Pomoc");
@@ -164,5 +165,7 @@ public class AccountView extends GridLayout implements View{
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
         encoderView.setVisible(false);
         decoderView.setVisible(false);
+        documentListView.setVisible(false);
+        documentListView.refresh();
     }
 }

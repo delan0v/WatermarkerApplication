@@ -1,5 +1,6 @@
 package com.feldman.blazej.presenter;
 
+import com.feldman.blazej.dct.DCT;
 import com.feldman.blazej.model.Document;
 import com.feldman.blazej.model.User;
 import com.feldman.blazej.model.Watermark;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * Created by Błażej on 02.12.2016.
@@ -32,8 +34,8 @@ public class WatermarkPresenter {
     private DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("kk:mm:ss");
 
     public static String QrCodeContentText;
-
     public static String QrCodeHash;
+
 
     public void addNewWatermark(Watermark watermark) {
         watermarkService.addWatermark(watermark);
@@ -45,13 +47,30 @@ public class WatermarkPresenter {
 
     public Watermark searchWatermarkById(String id){ return watermarkService.findById(id);}
 
-    public void createWatermark(Document document) throws WriterException, InvalidFormatException, NotFoundException, IOException {
+    public Watermark searchWatermarkWith(double dct){
+        List<Watermark> list = watermarkService.findAll();
+        for(Watermark a:list){
+            Double z = a.getWatermarkDct();
+                if ((z*0.9 < dct)&&(z*1.1>dct)) {
+
+                    return a;
+                }
+        }
+        return null;
+    }
+
+    public void createWatermark(Document document, boolean isWatermark) throws WriterException, InvalidFormatException, NotFoundException, IOException {
 
         Watermark watermark = new Watermark();
-        watermark.setWatermarkId(document.getDocHashCode());
         watermark.setDocument(document);
         watermark.setWatermarkText(generateWatermarkText());
+        if (isWatermark==true) {
+            watermark.setWatermarkDct(DCT.watermarkParam);
+        }else{
+            watermark.setWatermarkDct(0.0);
+        }
         watermark.setWatermarkBytes(new byte[0]);
+        watermark.setWatermarkId(document.getDocHashCode());
         addNewWatermark(watermark);
     }
     public String getDecodeText(String id){

@@ -1,5 +1,7 @@
 package com.feldman.blazej.util;
 
+import com.feldman.blazej.configuration.ApplicationConfiguration;
+import com.feldman.blazej.dct.DCT;
 import com.feldman.blazej.presenter.WatermarkPresenter;
 import com.feldman.blazej.qrCode.QRCode;
 import com.feldman.blazej.qrCode.QRCodeNameGenerator;
@@ -14,6 +16,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -31,28 +34,51 @@ import java.io.OutputStream;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ImageCreator {
 
-    public static String qrcFilePathShow =  "C:\\tmp\\qrcodesToRead\\";
-    private static String qrcFilePath = "C:\\tmp\\qrcodes\\";
-    private static String docFilePath = "C:\\tmp\\doc\\";
 
     @Autowired
     private WatermarkPresenter watermarkPresenter;
+    @Autowired
+    ApplicationConfiguration applicationConfiguration;
 
+    private InputStream inputStream;
+    private DCT dct;
 
-    public String addImageToXwpf(XWPFDocument xwpfDocument) throws IOException, NotFoundException, WriterException, InvalidFormatException {
+    public String addImageToXwpf(XWPFDocument xwpfDocument, boolean watermark) throws IOException, NotFoundException, WriterException, InvalidFormatException {
 
         QRCodeNameGenerator qrCodeNameGenerator = new QRCodeNameGenerator();
-        QRCode qrCode = new QRCode(watermarkPresenter.getQrCodeHash(), qrcFilePath + qrCodeNameGenerator.getFileName());
-        qrCode.create();
-        InputStream inputStream = new FileInputStream(qrcFilePath + qrCodeNameGenerator.getFileName());
-        xwpfDocument.createParagraph().createRun().addPicture(inputStream, Document.PICTURE_TYPE_PNG, "qrcode", Units.toEMU(200), Units.toEMU(200));
-        inputStream.close();
+        if(watermark==false) {
+            qrCodeNameGenerator.setNameForPng();
+            QRCode qrCode = new QRCode(watermarkPresenter.getQrCodeHash(), applicationConfiguration.qrcFilePath + qrCodeNameGenerator.getFileName());
+            qrCode.create();
 
-        OutputStream outputStream = new FileOutputStream(docFilePath + "qrcode.docx");
+            inputStream = new FileInputStream(applicationConfiguration.qrcFilePath + qrCodeNameGenerator.getFileName());
+            xwpfDocument.createParagraph().createRun().addPicture(inputStream, Document.PICTURE_TYPE_PNG, "qrcode", Units.toEMU(200), Units.toEMU(200));
+            inputStream.close();
+
+            OutputStream outputStream = new FileOutputStream(applicationConfiguration.docFilePath + "qrcode.docx");
+            xwpfDocument.write(outputStream);
+            outputStream.flush();
+            outputStream.close();
+        }else{
+            qrCodeNameGenerator.setNameForJpg();
+            dct = new DCT();
+            dct.createPicture(new File("C:\\tmp\\input2.jpg"),"jpg",dct.loadPicture(new File("C:\\tmp\\input.jpg")));
+            dct.loadPicture(new File("C:\\tmp\\input2.jpg"));
+            dct.goneDCT();
+            dct.setChange();
+            dct.goneIDCT();
+            dct.createPicture(new File(applicationConfiguration.qrcFilePath + qrCodeNameGenerator.getFileName()),"jpg",null);
+
+            inputStream = new FileInputStream(applicationConfiguration.qrcFilePath + qrCodeNameGenerator.getFileName());
+            xwpfDocument.createParagraph().createRun().addPicture(inputStream, Document.PICTURE_TYPE_JPEG, "qrcode", Units.toEMU(100), Units.toEMU(100));
+            inputStream.close();
+        }
+
+        OutputStream outputStream = new FileOutputStream(applicationConfiguration.docFilePath + "qrcode.docx");
         xwpfDocument.write(outputStream);
         outputStream.flush();
         outputStream.close();
 
-        return docFilePath + "qrcode.docx";
+        return applicationConfiguration.docFilePath + "qrcode.docx";
     }
 }

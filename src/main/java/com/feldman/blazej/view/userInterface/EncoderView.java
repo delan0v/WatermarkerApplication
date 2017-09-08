@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by Błażej on 05.02.2017.
@@ -109,10 +110,6 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
             Notification.show("Problem z odczytem");
             e.printStackTrace();
             encodeText.setValue("Problem z odczytem");
-        } catch (NotFoundException e) {
-            Notification.show("Nie znaleziono dokumentu");
-            e.printStackTrace();
-            encodeText.setValue("Nie znaleziono dokumentu");
         } catch (IOException e) {
             Notification.show("Problem wejścia/wyjścia");
             e.printStackTrace();
@@ -121,7 +118,10 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
             Notification.show("Niezgodny format");
             e.printStackTrace();
             encodeText.setValue("Niezgodny format");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 }

@@ -19,14 +19,15 @@ CREATE TABLE W_WATERMARK (
   watermark_id        INTEGER NOT NULL,
   document_id         INTEGER NOT NULL,
   watermark_watermark BYTEA   NOT NULL,
-  watermark_text      CHARACTER VARYING(255) NOT NULL
+  watermark_text      CHARACTER VARYING(255) NOT NULL,
+  watermark_dct       DOUBLE PRECISION
 );
 
 ALTER TABLE W_USER
   OWNER TO postgres;
 ALTER TABLE W_DOCUMENT
   OWNER TO postgres;
-ALTER TABLE W_WATERMARK
+ALTER TABLE w_watermark
   OWNER TO postgres;
 
 CREATE SEQUENCE id_user_seq
@@ -62,18 +63,18 @@ ALTER TABLE ONLY W_DOCUMENT
 
 ALTER TABLE id_watermark_seq
   OWNER TO postgres;
-ALTER SEQUENCE id_watermark_seq OWNED BY W_WATERMARK.watermark_id;
-ALTER TABLE ONLY W_WATERMARK
+ALTER SEQUENCE id_watermark_seq OWNED BY w_watermark.watermark_id;
+ALTER TABLE ONLY w_watermark
   ALTER COLUMN watermark_id SET DEFAULT nextval('id_watermark_seq' :: REGCLASS);
 
 ALTER TABLE ONLY W_USER
   ADD CONSTRAINT user_pkey PRIMARY KEY (user_id);
 ALTER TABLE ONLY W_DOCUMENT
   ADD CONSTRAINT document_pkey PRIMARY KEY (document_id);
-ALTER TABLE ONLY W_WATERMARK
+ALTER TABLE ONLY w_watermark
   ADD CONSTRAINT watermark_pkey PRIMARY KEY (watermark_id);
 
 ALTER TABLE ONLY W_DOCUMENT
   ADD CONSTRAINT w_document_user_id_fkey FOREIGN KEY (user_id) REFERENCES W_USER (user_id);
-ALTER TABLE ONLY W_WATERMARK
+ALTER TABLE ONLY w_watermark
   ADD CONSTRAINT w_watermark_document_id_fkey FOREIGN KEY (document_id) REFERENCES W_DOCUMENT (document_id);

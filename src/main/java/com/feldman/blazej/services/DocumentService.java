@@ -22,4 +22,6 @@ public interface DocumentService {
 
     List<Document> getAllDocuments();
 
+    Document findByNameAndUserId(String name, User user);
+
 }
