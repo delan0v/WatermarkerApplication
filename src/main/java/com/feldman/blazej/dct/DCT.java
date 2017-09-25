@@ -1,7 +1,9 @@
 package com.feldman.blazej.dct;
 
 import com.feldman.blazej.presenter.WatermarkPresenter;
+import com.feldman.blazej.util.JpegWriter;
 import com.vaadin.data.Buffered;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -21,7 +23,8 @@ import java.util.List;
 /**
  * Created by Błażej on 05.09.2017.
  */
-
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DCT{
 
     private int N = 16;
@@ -31,10 +34,31 @@ public class DCT{
     private int[][] f= new int[N][N];
     private BufferedImage bufOut;
     public static Double watermarkParam;
+
+    @Autowired
+    public WatermarkPresenter watermarkPresenter;
+
     public DCT() throws IOException {
+        initializeCoefficients();
 
-        this.initializeCoefficients();
+    }
+    public double getDctParam(File file){
 
+        loadPicture(file);
+        F = applyDCT(f);
+        for (int x=0;x<N;x++) {
+            for (int y=0;y<N;y++) {
+                System.out.println(F[x][y]+" => F["+x+"]["+y+"]");
+            }
+        }
+        return F[3][3];
+    }
+    public void createWatermarkWithDct(File input, File output){
+        loadPicture(input);
+        F = applyDCT(f);
+        setChange();
+        goneIDCT();
+        JpegWriter.createPicture(output,"jpg",bufOut);
 
     }
     private void initializeCoefficients() {
@@ -60,6 +84,7 @@ public class DCT{
         }
         return F;
     }
+
 
     public int[][] applyIDCT(double[][] F) {
         int[][] f = new int[N][N];
@@ -89,19 +114,16 @@ public class DCT{
         }
         return bufImgs;
     }
-    public void  goneDCT(){
-        F = applyDCT(f);
-        watermarkParam = F[6][6];
-
-    }
     public void setChange(){
-           //   F[6][6]=F[6][6] +(Math.random()/100000);
+        F[3][3] = F[3][3] *(1+Math.random()/100);
+        for (int x=0;x<N;x++) {
+            for (int y=0;y<N;y++) {
+                System.out.println(F[x][y]+" => F["+x+"]["+y+"]");
+            }
+        }
     }
     public void goneIDCT(){
         f = applyIDCT(F);
-
-        System.out.println("Back to f");
-        System.out.println("---------");
         bufOut = new BufferedImage(bufImgs.getWidth(),bufImgs.getHeight(), BufferedImage.TYPE_INT_RGB);
         for (int y=0;y < bufImgs.getWidth();y++) {
             for (int z=0;z<bufImgs.getHeight();z++) {
@@ -113,25 +135,5 @@ public class DCT{
                 }
             }
         }
-    }
-    public void createPicture(File file, String format,BufferedImage bufChange){
-
-
-        JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
-        jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        jpegParams.setCompressionQuality(1f);
-        if(bufChange==null){{
-            bufChange=bufOut;
-        }}
-
-        final ImageWriter writer = ImageIO.getImageWritersByFormatName(format).next();
-        try {
-            writer.setOutput(new FileImageOutputStream(file));
-            writer.write(null, new IIOImage(bufChange, null, null), jpegParams);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
     }
 }

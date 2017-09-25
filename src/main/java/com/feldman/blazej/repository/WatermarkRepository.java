@@ -10,4 +10,6 @@ public interface WatermarkRepository extends JpaRepository<Watermark,String> {
     Watermark findByDocument(Document document);
     Watermark findByWatermarkId(String watermarkId);
     List<Watermark> findAll();
+    Watermark findByWatermarkHash(String watermarkHash);
+    Document findFirstByOrderByDocumentDesc();
 }

@@ -16,5 +16,5 @@ public class ApplicationConfiguration {
     public String qrcFilePathShow =  "C:\\tmp\\qrcodesToRead\\";
     public String qrcFilePath = "C:\\tmp\\qrcodes\\";
     public String docFilePath = "C:\\tmp\\doc\\";
-
+    public String logoFormatter = "C:\\tmp\\logoFormatter\\";
 }

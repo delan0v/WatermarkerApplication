@@ -17,4 +17,8 @@ public interface WatermarkService {
     Watermark findById(String id);
 
     List<Watermark> findAll();
+
+    Watermark findByHash(String id);
+
+    Document searchLastId();
 }

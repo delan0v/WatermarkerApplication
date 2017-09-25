@@ -7,6 +7,7 @@ import com.feldman.blazej.view.upload.AccountView;
 import com.feldman.blazej.view.userInterface.DocumentListView;
 import com.feldman.blazej.view.userInterface.EncoderView;
 import com.feldman.blazej.view.userInterface.MenuView;
+import com.feldman.blazej.view.userInterface.WatermarkUploadView;
 import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
@@ -34,6 +35,8 @@ public class VaadinUI extends UI {
     private NewUserView newUserView;
     @Autowired
     private DocumentListView documentListView;
+    @Autowired
+    private WatermarkUploadView watermarkUploadView;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -44,5 +47,6 @@ public class VaadinUI extends UI {
         navigator.addView(ViewNames.ENCODER_VIEW,encoderView);
         navigator.addView(ViewNames.NEW_USER_VIEW,newUserView);
         navigator.addView(ViewNames.DOCUMENT_LIST_VIEW,documentListView);
+        navigator.addView(ViewNames.WATERMARK_UPLOAD_VIEW,watermarkUploadView);
     }
 }

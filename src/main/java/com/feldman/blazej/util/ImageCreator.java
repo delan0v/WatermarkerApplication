@@ -41,6 +41,7 @@ public class ImageCreator {
     ApplicationConfiguration applicationConfiguration;
 
     private InputStream inputStream;
+    @Autowired
     private DCT dct;
 
     public String addImageToXwpf(XWPFDocument xwpfDocument, boolean watermark) throws IOException, NotFoundException, WriterException, InvalidFormatException {
@@ -52,7 +53,7 @@ public class ImageCreator {
             qrCode.create();
 
             inputStream = new FileInputStream(applicationConfiguration.qrcFilePath + qrCodeNameGenerator.getFileName());
-            xwpfDocument.createParagraph().createRun().addPicture(inputStream, Document.PICTURE_TYPE_PNG, "qrcode", Units.toEMU(200), Units.toEMU(200));
+            xwpfDocument.createParagraph().createRun().addPicture(inputStream, Document.PICTURE_TYPE_PNG, "qrcode", Units.toEMU(100), Units.toEMU(100));
             inputStream.close();
 
             OutputStream outputStream = new FileOutputStream(applicationConfiguration.docFilePath + "qrcode.docx");
@@ -61,13 +62,8 @@ public class ImageCreator {
             outputStream.close();
         }else{
             qrCodeNameGenerator.setNameForJpg();
-            dct = new DCT();
-            dct.createPicture(new File("C:\\tmp\\input2.jpg"),"jpg",dct.loadPicture(new File("C:\\tmp\\input.jpg")));
-            dct.loadPicture(new File("C:\\tmp\\input2.jpg"));
-            dct.goneDCT();
-            dct.setChange();
-            dct.goneIDCT();
-            dct.createPicture(new File(applicationConfiguration.qrcFilePath + qrCodeNameGenerator.getFileName()),"jpg",null);
+            JpegWriter.createPicture(new File(applicationConfiguration.logoFormatter + "input2.jpg"),"jpg",dct.loadPicture(new File(applicationConfiguration.logoFormatter + "input.jpg")));
+            dct.createWatermarkWithDct(new File(applicationConfiguration.logoFormatter + "input2.jpg"),new File(applicationConfiguration.qrcFilePath + qrCodeNameGenerator.getFileName()));
 
             inputStream = new FileInputStream(applicationConfiguration.qrcFilePath + qrCodeNameGenerator.getFileName());
             xwpfDocument.createParagraph().createRun().addPicture(inputStream, Document.PICTURE_TYPE_JPEG, "qrcode", Units.toEMU(100), Units.toEMU(100));

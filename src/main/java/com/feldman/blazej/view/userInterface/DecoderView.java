@@ -2,8 +2,12 @@ package com.feldman.blazej.view.userInterface;
 
 import com.feldman.blazej.configuration.ApplicationConfiguration;
 import com.feldman.blazej.model.Document;
+import com.feldman.blazej.model.Logo;
 import com.feldman.blazej.presenter.DocumentPresenter;
+import com.feldman.blazej.presenter.LogoPresenter;
+import com.feldman.blazej.presenter.UserPresenter;
 import com.feldman.blazej.presenter.WatermarkPresenter;
+import com.feldman.blazej.util.AuthorizationUtils;
 import com.feldman.blazej.util.FileUtils;
 import com.feldman.blazej.util.IncorrectFormatException;
 import com.feldman.blazej.view.common.ViewNames;
@@ -16,6 +20,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.OptionGroup;
@@ -36,6 +41,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Błażej on 27.04.2017.
@@ -53,16 +60,27 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
     private DocumentPresenter documentPresenter;
     @Autowired
     private WatermarkPresenter watermarkPresenter;
+    @Autowired
+    private LogoPresenter logoPresenter;
+    @Autowired
+    private UserPresenter userPresenter;
 
     private Upload upload;
     public TextField textField;
     private HorizontalLayout horizontalLayout;
     private OptionGroup documentProtection;
     private OptionGroup documentWatermark;
+    private List<String> nameList;
+    private ComboBox comboBox;
+    private List<Logo> logoList;
 
 
     @PostConstruct
     private void init() {
+        refresh();
+    }
+    public void refresh(){
+        removeAllComponents();
         setSizeFull();
         setMargin(true);
         setSpacing(true);
@@ -73,6 +91,7 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
         upload.addFailedListener(this);
         upload.addSucceededListener(this);
         upload.addStartedListener(this);
+
 
         textField = new TextField("Podaj opis dokumentu");
         textField.setHeight("32");
@@ -90,11 +109,21 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
         documentWatermark.addItem("QrCode");
         documentWatermark.addItem("Watermark");
 
+        nameList = new ArrayList<>();
+        removeAllComponents();
+        logoList = logoPresenter.getAllLogoFromUser(userPresenter.searchUserByLogin(AuthorizationUtils.getUsernameFromSession()));
+        for(Logo logo:logoList){
+            nameList.add(logo.getName());
+        }
+        comboBox = new ComboBox("Wybierz logo użyte do watermarkingu:",nameList);
+        comboBox.setWidth("400");
+
         addComponent(uploadPanel2);
         verticalLayout.addComponent(textField);
         verticalLayout.addComponent(horizontalLayout);
         horizontalLayout.addComponent(documentProtection);
         horizontalLayout.addComponent(documentWatermark);
+        verticalLayout.addComponent(comboBox);
 
         setComponentAlignment(uploadPanel2, Alignment.MIDDLE_CENTER);
 
@@ -124,19 +153,20 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
 
     @Override
     public void uploadSucceeded(Upload.SucceededEvent event) {
+        logoPresenter.createLogoInTemporaryFile((String) comboBox.getValue());
         Document document;
         watermarkPresenter.setQrCodeContentText(textField.getValue());
         logger.debug("Upload dokumentu zakończony");
         logger.debug("Procesowanie dokumentu... >>>");
-        File file = new File("C:\\" + configuration.getFilepath() + "\\" + event.getFilename());
         logger.debug("<<< Zakończono procesowanie dokumentu.");
 
         try {
             if(documentWatermark.getValue().toString().equals("Watermark")){
-                document = documentPresenter.saveNewDocument(event, file, (String) documentProtection.getValue(),true);
+
+                document = documentPresenter.saveNewDocument(event, (String) documentProtection.getValue(),true);
                 watermarkPresenter.createWatermark(document,true);
             }else {
-                document = documentPresenter.saveNewDocument(event, file, (String) documentProtection.getValue(),false);
+                document = documentPresenter.saveNewDocument(event, (String) documentProtection.getValue(),false);
                 watermarkPresenter.createWatermark(document,false);
             }
             Notification.show("Dokument został zapisany w bazie danych");
@@ -163,7 +193,5 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
     }
 
     @Override
-    public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
-
-    }
+    public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {}
 }

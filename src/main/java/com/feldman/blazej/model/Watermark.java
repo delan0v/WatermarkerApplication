@@ -29,4 +29,7 @@ public class Watermark {
 
     @Column(name = "watermark_dct")
     private Double watermarkDct;
+
+    @Column(name = "watermark_hash")
+    private String watermarkHash;
 }

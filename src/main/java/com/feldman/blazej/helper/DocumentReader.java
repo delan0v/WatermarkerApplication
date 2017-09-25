@@ -35,22 +35,24 @@ public class DocumentReader {
     /**
      * Metoda parsuje plik doc/docx i zwraca odczytany z dokumentu tekst
      *
-     * @param filename - nazwa pliku do parsowania
+     * @param filePath - nazwa pliku do parsowania
      * @return tekst pobrany z dokuemntu
      */
-    public Object readDocument(String filename) throws IncorrectFormatException, WriterException, InvalidFormatException, NotFoundException, IOException {
+    public Object readDocument(String filePath) throws IncorrectFormatException, WriterException, InvalidFormatException, NotFoundException, IOException {
 
-        File file = new File(configuration.getFilepath() + filename);
-        String fileExtension = FileUtils.getFileExtension(filename);
+        File file = new File(filePath);
+        String fileExtension = FileUtils.getFileExtension(filePath);
         if ("docx".equalsIgnoreCase(fileExtension)) {
             return processDocxDocument(file);
         } else if ("doc".equalsIgnoreCase(fileExtension)) {
             return processDocDocument(file);
-        } else {
-            logger.error("Niepoprawne rozszerzenie pliku {} ! Nie powinno nigdy do tego dojść ", filename);
+        }  else{
+            logger.error("Niepoprawne rozszerzenie pliku {} ! Nie powinno nigdy do tego dojść ", filePath);
             throw new IncorrectFormatException();
         }
     }
+
+
 
     private XWPFDocument processDocxDocument(File file) throws WriterException, InvalidFormatException, NotFoundException, IOException {
 

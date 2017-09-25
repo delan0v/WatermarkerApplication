@@ -12,4 +12,5 @@ public interface ViewNames {
     String NEW_USER_VIEW = "newUserView";
     String DECODER_VIEW = "decoderView";
     String DOCUMENT_LIST_VIEW = "documentListView";
+    String WATERMARK_UPLOAD_VIEW= "watermarkUploadView";
 }

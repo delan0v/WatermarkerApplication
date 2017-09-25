@@ -10,11 +10,9 @@ import com.feldman.blazej.qrCode.QRCodeReader;
 import com.feldman.blazej.services.DocumentService;
 import com.feldman.blazej.util.HashCoder;
 import com.feldman.blazej.util.ImageCreator;
-import com.feldman.blazej.util.IncorrectAccessException;
-import com.feldman.blazej.util.IncorrectFormatException;
+import com.feldman.blazej.util.JpegWriter;
+import com.feldman.blazej.util.RandomStringGenerator;
 import com.google.zxing.NotFoundException;
-import com.google.zxing.WriterException;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload;
@@ -28,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import javax.print.Doc;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,6 +39,9 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +69,8 @@ public class DocumentPresenter {
     private DocumentReader documentReader;
     @Autowired
     private ImageCreator imageCreator;
+    @Autowired
+    private DCT dct;
 
     public void addNewDocument(Document document) {
         documentService.addDocument(document);
@@ -103,22 +107,22 @@ public class DocumentPresenter {
         Watermark watermark;
         QRCodeReader qrCodeReader = new QRCodeReader();
         XWPFDocument wordDoc = null;
-        DCT dct;
+
         if(searchDocumentByHashCode(HashCoder.getMD5Checksum(file.toString())) != null){
 
             watermark = watermarkPresenter.searchWatermarkByDocument(searchDocumentByHashCode(HashCoder.getMD5Checksum(file.toString())));
             if (watermark.getDocument().getProtection().equals("Prywatny") && !(watermark.getDocument().getUserId().getUserLogin().equals(getUsernameFromSession()))) {
-                Notification.show("Nie posiadasz wystarczających uprawnień do odczytu. Zaloguj się na swoim koncie!");
+                Notification.show(" Nie posiadasz wystarczających uprawnień do odczytu.%$ Zaloguj się na swoim koncie!");
                 return "";
             } else{
-                return "Dokument nie został naruszony i jest autentyczny: "+ watermark.getWatermarkText();
+                return " Dokument nie został naruszony i jest autentyczny.%$ "+ watermark.getWatermarkText();
             }
         }
         try {
-            wordDoc = (XWPFDocument) documentReader.readDocument(event.getFilename());
+            wordDoc = (XWPFDocument) documentReader.readDocument(applicationConfiguration.getFilepath()+event.getFilename());
         }catch (NotFoundException e){
             e.printStackTrace();
-            return "Nie znaleziono dokumentu";
+            return " Nie znaleziono dokumentu";
         }
         for (XWPFParagraph p : wordDoc.getParagraphs()) {
             for (XWPFRun run : p.getRuns()) {
@@ -128,12 +132,11 @@ public class DocumentPresenter {
                     BufferedImage image = ImageIO.read(bais);
                     try {
                         ImageIO.write(image, "png", new File(applicationConfiguration.qrcFilePathShow + "qrcodeToRead.png"));
-                        watermark = watermarkPresenter.searchWatermarkById(qrCodeReader.readQRCode(applicationConfiguration.qrcFilePathShow + "qrcodeToRead.png", new HashMap()));
+                        watermark = watermarkPresenter.searchWatermarkByHash(qrCodeReader.readQRCode(applicationConfiguration.qrcFilePathShow + "qrcodeToRead.png", new HashMap()));
                         if (watermark.getDocument().getProtection().equals("Prywatny") && !(watermark.getDocument().getUserId().getUserLogin().equals(getUsernameFromSession()))) {
-                            Notification.show("Nie posiadasz wystarczających uprawnień do odczytu. Zaloguj się na swoim koncie!");
-                            return "";
+                            return " Nie posiadasz wystarczających uprawnień do odczytu.%$ Zaloguj się na swoim koncie!";
                         } else {
-                            showMe = watermark.getWatermarkText();
+                            showMe =" Dokument został naruszony!%& "+ watermark.getWatermarkText();
                         }
 
                     }catch(NotFoundException e){}
@@ -143,19 +146,14 @@ public class DocumentPresenter {
                     byte[] img = pic.getPictureData().getData();
                     ByteArrayInputStream bais = new ByteArrayInputStream(img);
                     BufferedImage image = ImageIO.read(bais);
-
-                    ImageIO.write(image, "jpg", new File(applicationConfiguration.qrcFilePathShow + "qrcodeToRead.jpg"));
-                    dct = new DCT();
+                    JpegWriter.createPicture(new File(applicationConfiguration.qrcFilePathShow + "qrcodeToRead2.jpg"),"jpg",image);
                     try {
-                        dct.loadPicture(new File(applicationConfiguration.qrcFilePathShow + "qrcodeToRead.jpg"));
-                        dct.goneDCT();
-                        watermark = watermarkPresenter.searchWatermarkWith(DCT.watermarkParam);
+                        watermark = watermarkPresenter.searchWatermarkWith(dct.getDctParam(new File(applicationConfiguration.qrcFilePathShow + "qrcodeToRead2.jpg")));
                         if(watermark!=null) {
                             if (watermark.getDocument().getProtection().equals("Prywatny") && !(watermark.getDocument().getUserId().getUserLogin().equals(getUsernameFromSession()))) {
-                                Notification.show("Nie posiadasz wystarczających uprawnień do odczytu. Zaloguj się na swoim koncie!");
-                                return "";
+                                return " Nie posiadasz wystarczających uprawnień do odczytu.%$ Zaloguj się na swoim koncie!";
                             } else {
-                                showMe = watermark.getWatermarkText();
+                                showMe =" Dokument został naruszony!%$ "+ watermark.getWatermarkText();
                             }
                         }
                     }catch(Exception e){
@@ -166,49 +164,69 @@ public class DocumentPresenter {
 
         }
         if(showMe.equals("")){
-            return "Dokument nie został wcześniej zabezpieczony";
+            return " Dokument nie został wcześniej zabezpieczony ";
         }
         return showMe;
     }
 
-    public Document saveNewDocument(Upload.SucceededEvent event, File file, String protection,boolean watermark) throws Exception {
-
-        XWPFDocument xwpfDocument = (XWPFDocument) documentReader.readDocument(event.getFilename());
+    public Document saveNewDocument(Upload.SucceededEvent event, String protection,boolean watermark) throws Exception {
+        String a = event.getFilename();
+        int b = 1;
+        while(searchDocumentByName(a)!=null){
+            if(b==1) {
+                a = a.substring(0, a.length() - 5) + b + ".docx";
+            }else{
+                a = a.substring(0, a.length() - 6) + b + ".docx";
+            }
+            b++;
+        }
+        XWPFDocument xwpfDocument = (XWPFDocument) documentReader.readDocument(applicationConfiguration.getFilepath() + event.getFilename());
+        watermarkPresenter.setQrCodeHash(RandomStringGenerator.generateRandomValue());
         imageCreator.addImageToXwpf(xwpfDocument,watermark);
         Document document = new Document();
         document.setDocumentId(null);
         document.setUserId(userPresenter.searchUserByLogin(getUsernameFromSession()));
-        document.setName(event.getFilename());
+        document.setName(a);
+        File file = new File(applicationConfiguration.docFilePath + "\\qrcode.docx");
+        if(watermark==true){
+           // XWPFDocument wordDoc = (XWPFDocument) documentReader.readDocument(event.getFilename());
+            XWPFDocument wordDoc = (XWPFDocument) documentReader.readDocument(applicationConfiguration.docFilePath + "\\qrcode.docx");
+            for (XWPFParagraph p : wordDoc.getParagraphs()) {
+                for (XWPFRun run : p.getRuns()) {
+                    for (XWPFPicture pic : run.getEmbeddedPictures()) {
+                            byte[] img = pic.getPictureData().getData();
+                            ByteArrayInputStream bais = new ByteArrayInputStream(img);
+                            BufferedImage image = ImageIO.read(bais);
+                            JpegWriter.createPicture(new File(applicationConfiguration.qrcFilePathShow + "qrcodeToRead.jpg"),"jpg",image);
+                            try {
+                                watermarkPresenter.WatermarkCode = dct.getDctParam(new File(applicationConfiguration.qrcFilePathShow + "qrcodeToRead.jpg"));
+
+                            } catch (Exception e) {
+                                System.err.println("Problem z odczytem!!!!!!!");
+                                e.printStackTrace();
+                            }
+                    }
+                }
+            }
+        }
         document.setContent(createBytesString(file));
         document.setProtection(protection);
-        File file2 = new File(applicationConfiguration.docFilePath + "\\qrcode.docx");
-        String hash = HashCoder.getMD5Checksum(file2.toString());
-        watermarkPresenter.setQrCodeHash(hash);
+        String hash = HashCoder.getMD5Checksum(file.toString());
         document.setDocHashCode(hash);
         addNewDocument(document);
         return document;
     }
 
-    public byte[] createBytesString(File file) throws UnsupportedEncodingException {
-        byte [] b = new byte[(int) file.length()-1];
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            fileInputStream.read(b);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return b;
+    public byte[] createBytesString(File file) throws IOException {
+        Path path = Paths.get(file.toString());
+        return Files.readAllBytes(path);
     }
 
-    public void createFileFromByte(byte[] a) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutput out = new ObjectOutputStream(bos);
-        out.writeObject(a);
-        out.close();
-        bos.close();
-
+    public void createFileFromByte(byte[] a,String fileName) throws IOException {
+        FileOutputStream fos = new FileOutputStream(fileName);
+        fos.write(a);
+        fos.flush();
+        fos.close();
 
     }
 }

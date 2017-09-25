@@ -16,6 +16,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
@@ -47,7 +48,7 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
     private DocumentPresenter documentPresenter;
 
     private Upload upload2;
-    public TextField encodeText;
+    public TextArea encodeText;
 
     @PostConstruct
     private void init() {
@@ -62,9 +63,9 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
         upload2.addSucceededListener(this);
         upload2.addStartedListener(this);
 
-        encodeText = new TextField();
+        encodeText = new TextArea();
         encodeText.setWidth("400");
-        encodeText.setHeight("32");
+        encodeText.setHeight("130");
         encodeText.setValue("");
 
         addComponent(uploadPanel2);
@@ -101,7 +102,8 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
         logger.debug("Procesowanie dokumentu... >>>");
         logger.debug("<<< Zakończono procesowanie dokumentu.");
         try {
-            encodeText.setValue(documentPresenter.showDocument(succeededEvent));
+            String text = documentPresenter.showDocument(succeededEvent);
+            encodeText.setValue(text.replace("%$","\n"));
         } catch (IncorrectFormatException e) {
             Notification.show("Problem z formatem");
             e.printStackTrace();

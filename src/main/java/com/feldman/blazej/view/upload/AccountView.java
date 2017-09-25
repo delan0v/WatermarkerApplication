@@ -6,6 +6,7 @@ import com.feldman.blazej.view.component.MuiThemeView;
 import com.feldman.blazej.view.userInterface.DecoderView;
 import com.feldman.blazej.view.userInterface.DocumentListView;
 import com.feldman.blazej.view.userInterface.EncoderView;
+import com.feldman.blazej.view.userInterface.WatermarkUploadView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
@@ -35,7 +36,10 @@ public class AccountView extends GridLayout implements View{
     private DecoderView decoderView;
     @Autowired
     private DocumentListView documentListView;
+    @Autowired
+    private WatermarkUploadView watermarkUploadView;
 
+    private Button addNewWatermark;
     private Button uploadWatermarkButton;
     private Button readWatermarkFromDoc;
     private Button showUserDocuments;
@@ -61,8 +65,10 @@ public class AccountView extends GridLayout implements View{
 
         muiThemeView = new MuiThemeView();
         muiThemeView.setSizeFull();
-
         encoderView.setSizeFull();
+        decoderView.setSizeFull();
+        documentListView.setSizeFull();
+        watermarkUploadView.setSizeFull();
 
         middleHorizontalLayout = new HorizontalLayout();
         middleHorizontalLayout.setSizeFull();
@@ -74,8 +80,6 @@ public class AccountView extends GridLayout implements View{
         rightLayout.setSizeUndefined();
         rightLayout.setMargin(true);
 
-        decoderView.setSizeFull();
-        documentListView.setSizeFull();
 
         uploadWatermarkButton = new Button("Zabezpiecz dokument");
         uploadWatermarkButton.setHeight("32");
@@ -84,7 +88,9 @@ public class AccountView extends GridLayout implements View{
             decoderView.setVisible(true);
             encoderView.setVisible(false);
             documentListView.setVisible(false);
+            watermarkUploadView.setVisible(false);
             decoderView.textField.setValue("");
+            decoderView.refresh();
 
         });
 
@@ -95,6 +101,7 @@ public class AccountView extends GridLayout implements View{
             decoderView.setVisible(false);
             encoderView.setVisible(true);
             documentListView.setVisible(false);
+            watermarkUploadView.setVisible(false);
             encoderView.encodeText.setValue("");
         });
 
@@ -105,14 +112,28 @@ public class AccountView extends GridLayout implements View{
             decoderView.setVisible(false);
             encoderView.setVisible(false);
             documentListView.setVisible(true);
+            watermarkUploadView.setVisible(false);
             documentListView.refresh();
+        });
+
+        addNewWatermark = new Button("Dodaj logo");
+        addNewWatermark.setWidth("250");
+        addNewWatermark.setHeight("32");
+        addNewWatermark.addClickListener((Button.ClickListener)event->{
+            decoderView.setVisible(false);
+            encoderView.setVisible(false);
+            documentListView.setVisible(false);
+            watermarkUploadView.setVisible(true);
         });
 
         help = new Button("Pomoc");
         help .setHeight("32");
         help.setWidth("250");
         help.addClickListener((Button.ClickListener)event->{
-
+            decoderView.setVisible(false);
+            encoderView.setVisible(false);
+            documentListView.setVisible(false);
+            watermarkUploadView.setVisible(false);
         });
 
         leave = new Button("Wyloguj");
@@ -130,6 +151,7 @@ public class AccountView extends GridLayout implements View{
         rightLayout.addComponent(uploadWatermarkButton);
         rightLayout.addComponent(readWatermarkFromDoc);
         rightLayout.addComponent(showUserDocuments);
+        rightLayout.addComponent(addNewWatermark);
         rightLayout.addComponent(help);
         rightLayout.addComponent(leave);
 
@@ -140,6 +162,7 @@ public class AccountView extends GridLayout implements View{
         middleHorizontalLayout.addComponent(decoderView);
         middleHorizontalLayout.addComponent(encoderView);
         middleHorizontalLayout.addComponent(documentListView);
+        middleHorizontalLayout.addComponent(watermarkUploadView);
         middleHorizontalLayout.addComponent(rightLayout);
 
         setComponentAlignment(mainPanel,Alignment.MIDDLE_CENTER);
@@ -149,13 +172,15 @@ public class AccountView extends GridLayout implements View{
         mainVerticalLayout.setComponentAlignment(footerLayout,Alignment.MIDDLE_CENTER);
 
         middleHorizontalLayout.setComponentAlignment(decoderView,Alignment.MIDDLE_CENTER);
-        middleHorizontalLayout.setComponentAlignment(rightLayout,Alignment.TOP_RIGHT);
         middleHorizontalLayout.setComponentAlignment(encoderView,Alignment.MIDDLE_CENTER);
         middleHorizontalLayout.setComponentAlignment(documentListView,Alignment.MIDDLE_CENTER);
+        middleHorizontalLayout.setComponentAlignment(watermarkUploadView,Alignment.MIDDLE_CENTER);
+        middleHorizontalLayout.setComponentAlignment(rightLayout,Alignment.TOP_RIGHT);
 
         rightLayout.setComponentAlignment(uploadWatermarkButton,Alignment.MIDDLE_CENTER);
         rightLayout.setComponentAlignment(readWatermarkFromDoc,Alignment.MIDDLE_CENTER);
         rightLayout.setComponentAlignment(showUserDocuments,Alignment.MIDDLE_CENTER);
+        rightLayout.setComponentAlignment(addNewWatermark,Alignment.MIDDLE_CENTER);
         rightLayout.setComponentAlignment(help,Alignment.MIDDLE_CENTER);
         rightLayout.setComponentAlignment(leave,Alignment.MIDDLE_CENTER);
 
@@ -166,6 +191,7 @@ public class AccountView extends GridLayout implements View{
         encoderView.setVisible(false);
         decoderView.setVisible(false);
         documentListView.setVisible(false);
+        watermarkUploadView.setVisible(false);
         documentListView.refresh();
     }
 }

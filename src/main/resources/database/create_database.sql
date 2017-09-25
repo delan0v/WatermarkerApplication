@@ -6,6 +6,12 @@ CREATE TABLE W_USER (
   user_email    CHARACTER VARYING(255) NOT NULL,
   user_password CHARACTER VARYING(255) NOT NULL
 );
+CREATE TABLE W_LOGO (
+  logo_id       INTEGER       NOT NULL,
+  user_id       INTEGER       NOT NULL,
+  logo_content  BYTEA         NOT NULL,
+  logo_name     VARCHAR(255)  NOT NULL
+);
 
 CREATE TABLE W_DOCUMENT (
   document_id              INTEGER                  NOT NULL,
@@ -48,6 +54,12 @@ INCREMENT BY 1
 NO MINVALUE
 NO MAXVALUE
 CACHE 1;
+CREATE SEQUENCE id_logo_seq
+START WITH 1
+INCREMENT BY 1
+NO MINVALUE
+NO MAXVALUE
+CACHE 1;
 
 ALTER TABLE id_user_seq
   OWNER TO postgres;
@@ -66,6 +78,13 @@ ALTER TABLE id_watermark_seq
 ALTER SEQUENCE id_watermark_seq OWNED BY w_watermark.watermark_id;
 ALTER TABLE ONLY w_watermark
   ALTER COLUMN watermark_id SET DEFAULT nextval('id_watermark_seq' :: REGCLASS);
+
+ALTER TABLE id_logo_seq
+  OWNER TO postgres;
+ALTER SEQUENCE id_logo_seq OWNED BY w_logo.logo_id;
+ALTER TABLE ONLY w_logo
+  ALTER COLUMN logo_id SET DEFAULT nextval('id_logo_seq' :: REGCLASS);
+
 
 ALTER TABLE ONLY W_USER
   ADD CONSTRAINT user_pkey PRIMARY KEY (user_id);

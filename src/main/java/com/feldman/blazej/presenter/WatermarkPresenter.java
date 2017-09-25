@@ -35,6 +35,7 @@ public class WatermarkPresenter {
 
     public static String QrCodeContentText;
     public static String QrCodeHash;
+    public static Double WatermarkCode;
 
 
     public void addNewWatermark(Watermark watermark) {
@@ -45,16 +46,24 @@ public class WatermarkPresenter {
         return watermarkService.findByDocument(document);
     }
 
-    public Watermark searchWatermarkById(String id){ return watermarkService.findById(id);}
+    public Watermark searchWatermarkByHash(String id){ return watermarkService.findByHash(id);}
+
+    public Watermark searchWatermarkById(String id){ return watermarkService.findByHash(id);}
 
     public Watermark searchWatermarkWith(double dct){
         List<Watermark> list = watermarkService.findAll();
         for(Watermark a:list){
             Double z = a.getWatermarkDct();
-                if ((z*0.9 < dct)&&(z*1.1>dct)) {
+            if(z==null){
 
-                    return a;
-                }
+            }
+            else if(z==dct){
+                return a;
+            }
+//                if ((z*0.9 < dct)&&(z*1.1>dct)) {
+//
+//                    return a;
+//                }
         }
         return null;
     }
@@ -65,20 +74,41 @@ public class WatermarkPresenter {
         watermark.setDocument(document);
         watermark.setWatermarkText(generateWatermarkText());
         if (isWatermark==true) {
-            watermark.setWatermarkDct(DCT.watermarkParam);
+            watermark.setWatermarkDct(WatermarkCode);
         }else{
             watermark.setWatermarkDct(0.0);
         }
+        watermark.setWatermarkHash(getQrCodeHash());
         watermark.setWatermarkBytes(new byte[0]);
         watermark.setWatermarkId(document.getDocHashCode());
         addNewWatermark(watermark);
     }
+
+    public Long searchLastId(){
+        List <Watermark> list = watermarkService.findAll();
+        if(list.size()==0){
+            return Long.valueOf(0);
+        }
+        Watermark b = null;
+        for(Watermark a:list){
+            if(b==null){
+                b=a;
+            }
+            else{
+                if(a.getDocument().getDocumentId()>b.getDocument().getDocumentId()){
+                    b=a;
+                }
+            }
+        }
+        return b.getDocument().getDocumentId();
+    }
+
     public String getDecodeText(String id){
-        return searchWatermarkById(id).getWatermarkText();
+        return searchWatermarkByHash(id).getWatermarkText();
     }
     public String generateWatermarkText(){
         User user = userPresenter.searchUserByLogin(AuthorizationUtils.getUsernameFromSession());
-        return "Imię: "+user.getName()+"\n Nazwisko: "+user.getSurname()+"\n Data utworzenia: "+ LocalDate.now().format(dateFormat)+" "+ LocalTime.now().format(timeFormat)+"\n Opis: "+ getQrCodeContentText();
+        return "Imię: "+user.getName()+"%$ Nazwisko: "+user.getSurname()+"%$ Data utworzenia: "+ LocalDate.now().format(dateFormat)+" "+ LocalTime.now().format(timeFormat)+"%$ Opis: "+ getQrCodeContentText();
     }
     public String getQrCodeContentText() {
         return QrCodeContentText;

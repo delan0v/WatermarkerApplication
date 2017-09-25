@@ -14,12 +14,15 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,8 +44,7 @@ public class DocumentListView extends VerticalLayout implements View {
     private ComboBox comboBox;
     private List<String> nameList;
     private Button downloadButton;
-    private StreamResource streamResource;
-    private FileDownloader fileDownloader;
+
 
     public DocumentListView() {
         setSizeFull();
@@ -55,19 +57,6 @@ public class DocumentListView extends VerticalLayout implements View {
     }
     public void refresh(){
 
-        fileDownloader = new FileDownloader(new Resource() {
-            @Override
-            public String getMIMEType() {
-                return null;
-            }
-        });
-//        streamResource = new StreamResource(new StreamResource.StreamSource() {
-//            @Override
-//            public InputStream getStream() {
-//                return null;
-//            }
-//        });
-
         removeAllComponents();
         nameList = new ArrayList<>();
         comboBox = new ComboBox("Wybierz dokument",nameList);
@@ -77,8 +66,11 @@ public class DocumentListView extends VerticalLayout implements View {
         downloadButton.setWidth("250");
         downloadButton.addClickListener((Button.ClickListener)event-> {
             try {
-                documentPresenter.createFileFromByte(documentPresenter.searchDocumentByNameAndUser(comboBox.getValue().toString(), userPresenter.searchUserByLogin(AuthorizationUtils.getUsernameFromSession())).getContent());
+                File home = FileSystemView.getFileSystemView().getHomeDirectory();
+                documentPresenter.createFileFromByte(documentPresenter.searchDocumentByNameAndUser(comboBox.getValue().toString(), userPresenter.searchUserByLogin(AuthorizationUtils.getUsernameFromSession())).getContent(),home.getAbsolutePath()+"\\"+comboBox.getValue().toString());
+                Notification.show("Udane pobranie dokumentu");
             } catch (IOException e) {
+                Notification.show("Wystąpił błąd, spróbuj ponownie");
                 e.printStackTrace();
             }
         });

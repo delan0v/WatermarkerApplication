@@ -40,4 +40,15 @@ public class WatermarkServiceImpl implements WatermarkService {
     public List<Watermark> findAll(){
         return watermarkRepository.findAll();
     }
+
+    @Override
+    public Watermark findByHash(String id) {
+        return watermarkRepository.findByWatermarkHash(id);
+    }
+
+    @Override
+    public Document searchLastId() {
+        return watermarkRepository.findFirstByOrderByDocumentDesc();
+    }
+
 }
