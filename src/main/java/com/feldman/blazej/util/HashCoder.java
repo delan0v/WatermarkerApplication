@@ -29,8 +29,6 @@ public class HashCoder {
         return complete.digest();
     }
 
-    // see this How-to for a faster way to convert
-    // a byte array to a HEX string
     public static String getMD5Checksum(String filename) throws Exception {
         byte[] b = createChecksum(filename);
         String result = "";

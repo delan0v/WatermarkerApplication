@@ -5,18 +5,14 @@ import com.feldman.blazej.dct.DCT;
 import com.feldman.blazej.presenter.WatermarkPresenter;
 import com.feldman.blazej.qrCode.QRCode;
 import com.feldman.blazej.qrCode.QRCodeNameGenerator;
-import com.feldman.blazej.qrCode.QRCodeReader;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.WriterException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.Document;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

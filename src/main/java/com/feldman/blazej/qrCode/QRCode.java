@@ -23,7 +23,7 @@ public class QRCode {
     }
 
     public void create() throws IOException, WriterException, NotFoundException {
-        QRCodeReader qrCodeReader = new QRCodeReader();
+        QRCoder qrCodeReader = new QRCoder();
 
         String charset = "UTF-8";
 

@@ -153,7 +153,7 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
 
     @Override
     public void uploadSucceeded(Upload.SucceededEvent event) {
-        logoPresenter.createLogoInTemporaryFile((String) comboBox.getValue());
+
         Document document;
         watermarkPresenter.setQrCodeContentText(textField.getValue());
         logger.debug("Upload dokumentu zakończony");
@@ -162,7 +162,7 @@ public class DecoderView extends VerticalLayout implements View, Upload.StartedL
 
         try {
             if(documentWatermark.getValue().toString().equals("Watermark")){
-
+                logoPresenter.createLogoInTemporaryFile((String) comboBox.getValue());
                 document = documentPresenter.saveNewDocument(event, (String) documentProtection.getValue(),true);
                 watermarkPresenter.createWatermark(document,true);
             }else {

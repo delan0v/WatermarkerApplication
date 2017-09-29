@@ -12,8 +12,7 @@ public static String generateRandomValue(){
         char c = chars[random.nextInt(chars.length)];
         sb.append(c);
     }
-    randVal = sb.toString();
-    return randVal;
-
-}
+        randVal = sb.toString();
+        return randVal;
+    }
 }

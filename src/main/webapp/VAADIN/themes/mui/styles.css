@@ -12420,7 +12420,7 @@ h1.no-margin, .v-label-h1.no-margin, h2.no-margin, .v-label-h2.no-margin, h3.no-
 .v-button {
 	background: transparent;
 	text-align: left;
-	border: 1px #d6c9c9;
+	border: 2px #d6c9c9;
 	border-radius: 0;
 	font-family: "Open Sans";
 	font-size: 15px;
@@ -12448,7 +12448,7 @@ h1.no-margin, .v-label-h1.no-margin, h2.no-margin, .v-label-h2.no-margin, h3.no-
 }
 
 .v-textfield {
-	border: 1px #d6c9c9;
+	border: 2px #d6c9c9;
 	border-radius: 0;
 	font-family: "Open Sans";
 }
@@ -12471,9 +12471,9 @@ h1.no-margin, .v-label-h1.no-margin, h2.no-margin, .v-label-h2.no-margin, h3.no-
 	background: transparent;
 	text-align: left;
 	border-color: #d6c9c9;
-	border-left-width: 1px;
-	border-top-width: 1px;
-	border-bottom-width: 1px;
+	border-left-width: 2px;
+	border-top-width: 2px;
+	border-bottom-width: 2px;
 	border-radius: 0;
 	font-family: "Open Sans";
 	font-size: 15px;

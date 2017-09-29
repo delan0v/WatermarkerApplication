@@ -37,6 +37,8 @@ public class WatermarkPresenter {
     public static String QrCodeHash;
     public static Double WatermarkCode;
 
+    public static int indexNumber;
+
 
     public void addNewWatermark(Watermark watermark) {
         watermarkService.addWatermark(watermark);
@@ -72,7 +74,7 @@ public class WatermarkPresenter {
 
         Watermark watermark = new Watermark();
         watermark.setDocument(document);
-        watermark.setWatermarkText(generateWatermarkText());
+        watermark.setWatermarkText(generateWatermarkText(document));
         if (isWatermark==true) {
             watermark.setWatermarkDct(WatermarkCode);
         }else{
@@ -106,9 +108,10 @@ public class WatermarkPresenter {
     public String getDecodeText(String id){
         return searchWatermarkByHash(id).getWatermarkText();
     }
-    public String generateWatermarkText(){
+    public String generateWatermarkText(Document document){
         User user = userPresenter.searchUserByLogin(AuthorizationUtils.getUsernameFromSession());
-        return "Imię: "+user.getName()+"%$ Nazwisko: "+user.getSurname()+"%$ Data utworzenia: "+ LocalDate.now().format(dateFormat)+" "+ LocalTime.now().format(timeFormat)+"%$ Opis: "+ getQrCodeContentText();
+        return "Imię: "+user.getName()+"%$Nazwisko: "+user.getSurname()+"%$Data utworzenia: "+ LocalDate.now().format(dateFormat)+" "
+                + LocalTime.now().format(timeFormat)+"%$Opis: "+ getQrCodeContentText()+"%$Hash: "+document.getDocHashCode();
     }
     public String getQrCodeContentText() {
         return QrCodeContentText;
@@ -123,6 +126,13 @@ public class WatermarkPresenter {
 
     public static void setQrCodeHash(String qrCodeHash) {
         QrCodeHash = qrCodeHash;
+    }
+    public int getIndexNumber() {
+        return indexNumber;
+    }
+
+    public void setIndexNumber(int indexNumber) {
+        WatermarkPresenter.indexNumber = indexNumber;
     }
 }
 

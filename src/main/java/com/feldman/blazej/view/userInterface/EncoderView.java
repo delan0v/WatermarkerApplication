@@ -65,7 +65,7 @@ public class EncoderView extends VerticalLayout implements View, Upload.StartedL
 
         encodeText = new TextArea();
         encodeText.setWidth("400");
-        encodeText.setHeight("130");
+        encodeText.setHeight("160");
         encodeText.setValue("");
 
         addComponent(uploadPanel2);

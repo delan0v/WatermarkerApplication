@@ -1,6 +1,9 @@
 package com.feldman.blazej.dct;
 
+import com.feldman.blazej.presenter.DocumentPresenter;
+import com.feldman.blazej.presenter.UserPresenter;
 import com.feldman.blazej.presenter.WatermarkPresenter;
+import com.feldman.blazej.util.AuthorizationUtils;
 import com.feldman.blazej.util.JpegWriter;
 import com.vaadin.data.Buffered;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +36,8 @@ public class DCT{
     private double[][] F;
     private int[][] f= new int[N][N];
     private BufferedImage bufOut;
-    public static Double watermarkParam;
+    private int weigth = 3;
+    private int height= 2;
 
     @Autowired
     public WatermarkPresenter watermarkPresenter;
@@ -42,16 +46,17 @@ public class DCT{
         initializeCoefficients();
 
     }
+    public void setChange(){
+
+        F[weigth][height] = F[weigth][height] + (watermarkPresenter.getIndexNumber()*3);
+
+    }
+
     public double getDctParam(File file){
 
         loadPicture(file);
         F = applyDCT(f);
-        for (int x=0;x<N;x++) {
-            for (int y=0;y<N;y++) {
-                System.out.println(F[x][y]+" => F["+x+"]["+y+"]");
-            }
-        }
-        return F[3][3];
+        return F[weigth][height];
     }
     public void createWatermarkWithDct(File input, File output){
         loadPicture(input);
@@ -75,17 +80,15 @@ public class DCT{
                 double sum = 0.0;
                 for (int i=0;i<N;i++) {
                     for (int j=0;j<N;j++) {
-                        sum+=Math.cos(((2*i+1)/(2.0*N))*u*Math.PI)*Math.cos(((2*j+1)/(2.0*N))*v*Math.PI)*f[i][j];
+                        sum+=Math.cos(((2*i+1)/(2.0*N))*u*Math.PI)*
+                                Math.cos(((2*j+1)/(2.0*N))*v*Math.PI)*f[i][j];
                     }
                 }
                 sum*=((c[u]*c[v])/4.0);
                 F[u][v]=sum;
             }
-        }
-        return F;
+        }return F;
     }
-
-
     public int[][] applyIDCT(double[][] F) {
         int[][] f = new int[N][N];
         for (int i=0;i<N;i++) {
@@ -93,13 +96,13 @@ public class DCT{
                 double sum = 0.0;
                 for (int u=0;u<N;u++) {
                     for (int v=0;v<N;v++) {
-                        sum+=(2*c[u]*c[v]/N)*Math.cos(((2*i+1)/(2.0*N))*u*Math.PI)*Math.cos(((2*j+1)/(2.0*N))*v*Math.PI)*F[u][v];
+                        sum+=(2*c[u]*c[v]/N)*Math.cos(((2*i+1)/(2.0*N))*u*Math.PI)
+                                *Math.cos(((2*j+1)/(2.0*N))*v*Math.PI)*F[u][v];
                     }
                 }
                 f[i][j]=(int)Math.round(sum);
             }
-        }
-        return f;
+        }return f;
     }
     public BufferedImage loadPicture(File file){
         try {
@@ -114,14 +117,7 @@ public class DCT{
         }
         return bufImgs;
     }
-    public void setChange(){
-        F[3][3] = F[3][3] *(1+Math.random()/100);
-        for (int x=0;x<N;x++) {
-            for (int y=0;y<N;y++) {
-                System.out.println(F[x][y]+" => F["+x+"]["+y+"]");
-            }
-        }
-    }
+
     public void goneIDCT(){
         f = applyIDCT(F);
         bufOut = new BufferedImage(bufImgs.getWidth(),bufImgs.getHeight(), BufferedImage.TYPE_INT_RGB);
