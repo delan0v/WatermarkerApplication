@@ -1,27 +1,17 @@
 package com.feldman.blazej.dct;
 
-import com.feldman.blazej.presenter.DocumentPresenter;
-import com.feldman.blazej.presenter.UserPresenter;
+
 import com.feldman.blazej.presenter.WatermarkPresenter;
-import com.feldman.blazej.util.AuthorizationUtils;
 import com.feldman.blazej.util.JpegWriter;
-import com.vaadin.data.Buffered;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.stream.FileImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 /**
  * Created by Błażej on 05.09.2017.
@@ -36,8 +26,8 @@ public class DCT{
     private double[][] F;
     private int[][] f= new int[N][N];
     private BufferedImage bufOut;
-    private int weigth = 3;
-    private int height= 2;
+    private int weigth = 5;
+    private int height= 7;
 
     @Autowired
     public WatermarkPresenter watermarkPresenter;

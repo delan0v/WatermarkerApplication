@@ -96,7 +96,6 @@ public class DocumentPresenter {
 
     public String showDocument(Upload.SucceededEvent event) throws Exception {
         File file = new File("C:\\" + applicationConfiguration.getFilepath() + "\\" + event.getFilename());
-        String showMe = "";
         Watermark watermark;
         QRCoder qrCodeReader = new QRCoder();
         XWPFDocument wordDoc = null;
@@ -125,14 +124,18 @@ public class DocumentPresenter {
                     BufferedImage image = ImageIO.read(bais);
                     try {
                         ImageIO.write(image, "png", new File(applicationConfiguration.qrcFilePathShow + "qrcodeToRead.png"));
+
                         watermark = watermarkPresenter.searchWatermarkByHash(qrCodeReader.readQRCode(applicationConfiguration.qrcFilePathShow + "qrcodeToRead.png", new HashMap()));
-                        if (watermark.getDocument().getProtection().equals("Prywatny") && !(watermark.getDocument().getUserId().getUserLogin().equals(getUsernameFromSession()))) {
-                            return "Nie posiadasz wystarczających uprawnień do odczytu.%$Zaloguj się na swoim koncie!";
-                        } else {
-                            showMe ="Dokument został naruszony!%$"+ watermark.getWatermarkText();
+                        if(watermark!=null) {
+                            if (watermark.getDocument().getProtection().equals("Prywatny") && !(watermark.getDocument().getUserId().getUserLogin().equals(getUsernameFromSession()))) {
+                                return "Nie posiadasz wystarczających uprawnień do odczytu.%$Zaloguj się na swoim koncie!";
+                            } else {
+                                return "Dokument został naruszony!%$" + watermark.getWatermarkText();
+                            }
                         }
 
                     }catch(NotFoundException e){}
+
 
                 }
                 for (XWPFPicture pic : run.getEmbeddedPictures()) {
@@ -146,7 +149,7 @@ public class DocumentPresenter {
                             if (watermark.getDocument().getProtection().equals("Prywatny") && !(watermark.getDocument().getUserId().getUserLogin().equals(getUsernameFromSession()))) {
                                 return "Nie posiadasz wystarczających uprawnień do odczytu.%$Zaloguj się na swoim koncie!";
                             } else {
-                                showMe ="Dokument został naruszony!%$"+ watermark.getWatermarkText();
+                                return "Dokument został naruszony!%$"+ watermark.getWatermarkText();
                             }
                         }
                     }catch(Exception e){
@@ -156,10 +159,7 @@ public class DocumentPresenter {
             }
 
         }
-        if(showMe.equals("")){
             return "Dokument nie został wcześniej zabezpieczony ";
-        }
-        return showMe;
     }
 
     public Document saveNewDocument(Upload.SucceededEvent event, String protection,boolean watermark) throws Exception {
